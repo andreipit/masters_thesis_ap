@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>36743adb-75ca-488c-9295-8a8a8d0e01bd</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>test_gym_registration.py</StartupFile>
+    <StartupFile>single_entry_point.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -26,8 +26,14 @@
     <Compile Include="environment\envs\env_01.py" />
     <Compile Include="environment\envs\__init__.py" />
     <Compile Include="environment\__init__.py" />
+    <Compile Include="utils\env\init.py" />
+    <Compile Include="utils\env\render.py" />
+    <Compile Include="utils\env\reset.py" />
+    <Compile Include="utils\env\step.py" />
+    <Compile Include="utils\server.py" />
     <Compile Include="setup.py" />
     <Compile Include="single_entry_point.py" />
+    <Compile Include="test\test_server.py" />
     <Compile Include="test_gym_registration.py" />
   </ItemGroup>
   <ItemGroup>
@@ -37,11 +43,15 @@
     <Folder Include="environment\" />
     <Folder Include="environment\envs\" />
     <Folder Include="environment\envs\__pycache__\" />
+    <Folder Include="utils\" />
+    <Folder Include="test\" />
+    <Folder Include="utils\env\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="environment\envs\__pycache__\basic_env.cpython-38.pyc" />
     <Content Include="environment\envs\__pycache__\basic_env_2.cpython-38.pyc" />
     <Content Include="environment\envs\__pycache__\__init__.cpython-38.pyc" />
+    <Content Include="index.html" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
