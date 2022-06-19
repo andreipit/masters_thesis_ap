@@ -26,7 +26,10 @@
     <Compile Include="environment\envs\env_01.py" />
     <Compile Include="environment\envs\__init__.py" />
     <Compile Include="environment\__init__.py" />
+    <Compile Include="test\test_env.py" />
+    <Compile Include="test\test_env_01_reset.py" />
     <Compile Include="utils\env\init.py" />
+    <Compile Include="utils\env\model.py" />
     <Compile Include="utils\env\render.py" />
     <Compile Include="utils\env\reset.py" />
     <Compile Include="utils\env\step.py" />

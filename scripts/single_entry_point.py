@@ -6,24 +6,26 @@ import time
 import gym
 
 from utils.server import Server
-
+from environment.envs.env_01 import Env01
 
 if __name__ == '__main__':
-    s: Server = Server()
-
-
-    s.connect()
+    Server.connect()
 
     env = gym.make('environment:env-v1')
+    #env = Env01()
     done = False
+
+    time.sleep(2)
+    state = env.reset(seed = None, return_info = None, options = None)
+
     while not done:
-        state = env.reset(seed = None, return_info = None, options = None)
-        action = env.action_space.sample()
-        state, reward, done, info = env.step(action)
+        #time.sleep(2)
+        #state = env.reset(seed = None, return_info = None, options = None)
+        #action = env.action_space.sample()
+        #state, reward, done, info = env.step(action)
 
         print('frame', time.time())
-        s.validate_connection_loop(1)
-        time.sleep(1)
+        Server.validate_connection_loop(1)
 
 
 

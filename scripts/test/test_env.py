@@ -11,32 +11,23 @@ from utils.env.init import EnvInit
 from utils.env.step import EnvStep
 from utils.env.reset import EnvReset
 from utils.env.render import EnvRender
-from utils.env.model import EnvModel
 
 class Env01(Env):
 
     #server: Server = None
 
-    initer: EnvInit = None
-    steper: EnvStep = None
-    reseter: EnvReset = None
-    renderer: EnvRender = None
-    model: EnvModel = None
+    init: EnvInit = None
 
     def __init__(self):
-        self.initer = EnvInit()
-        self.steper = EnvStep()
-        self.reseter = EnvReset()
-        self.renderer = EnvRender()
-        self.model = EnvModel()
+        self.init = EnvInit()
 
-        self.observation_space = Box(low=-1., high=1., shape=(1,), dtype="float32")
-        self.action_space = Box(low=-1., high=1., shape=(1,), dtype="float32")
+        self.observation_space = Box(low=-1, high=1, shape=(1,), dtype="float32")
+        self.action_space = Box(low=-1, high=1, shape=(1,), dtype="float32")
         self.state = random.randint(0, 10)
         self.rounds = 3
         self.collected_reward = -1
     
-    def steper(self, action):
+    def step(self, action):
         done = False
         info = {}
         rw = 0
@@ -57,16 +48,15 @@ class Env01(Env):
         if self.rounds == 0:
             done = True
         
-        self.renderer(action, rw)
+        self.render(action, rw)
         obs = obs/50 - 1 # normalize obs: [0..100] => [-1..1] =>: 0=>-1, 50=>0, 100=>1, 25 = 25/50 - 1 = -0.5
         return obs, self.collected_reward, done, info
     
     def reset(self, seed: Optional[int] = None, return_info: bool = False, options: Optional[dict] = None) -> Union[ObsType, Tuple[ObsType, dict]]:
-        self.reseter.run()
         self.state = 0
-        return np.ones((1,), dtype="float32")
+        return np.ones((1,), dtype=np.float32)
 
-    def renderer(self, action, rw):
+    def render(self, action, rw):
         print("=============================================================================")
         print(f"v1new: Round : {self.rounds}\nDistance Travelled : {action[0]}\nReward Received: {rw}")
         print(f"Total Reward : {self.collected_reward}")
@@ -77,8 +67,8 @@ if __name__ == '__main__':
     env = Env01()
     done = False
     while not done:
-        state = env.reseter(seed = None, return_info = None, options = None)
+        state = env.reset(seed = None, return_info = None, options = None)
         action = env.action_space.sample()
-        state, reward, done, info = env.steper(action)
+        state, reward, done, info = env.step(action)
         
         

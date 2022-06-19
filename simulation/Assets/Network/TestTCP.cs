@@ -7,6 +7,7 @@ using System.Threading;
 public class TestTCP : MonoBehaviour
 {
     float m_Timer;
+    bool m_DebugMode = false;
 
     private void Start()
     {
@@ -25,13 +26,13 @@ public class TestTCP : MonoBehaviour
                 //byte[] mes = System.Text.Encoding.ASCII.GetBytes("{key1:val1, key2:val2}"); // string someString = Encoding.ASCII.GetString(bytes);
                 //                                                                            //MyTCPClientLibrary.Send(mes);
                 //await MyTCPClientLibrary.Send(mes);
-                Debug.Log("1) before method");
+                if (m_DebugMode) Debug.Log("1) before method");
                 MyAsync();
-                Debug.Log("3) after method");
+                if (m_DebugMode) Debug.Log("3) after method");
             }
             catch
             {
-                Debug.Log("Error: was catched");
+                if (m_DebugMode) Debug.Log("Error: was catched");
                 m_Timer = Time.time;
             }
         }
@@ -40,17 +41,33 @@ public class TestTCP : MonoBehaviour
     async void MyAsync()
     {
         byte[] mes = System.Text.Encoding.ASCII.GetBytes("{key1_update:val1_true, key2:val2}"); // string someString = Encoding.ASCII.GetString(bytes);
-        Debug.Log("2) before sending");
+        if (m_DebugMode) Debug.Log("2) before sending");
         try
         {
             int x = await Task.Run(() => MyTCPClientLibrary.Send(mes));
+            if (x == 1)
+            {
+                Debug.Log("reset happend");
+
+                var node = GameObject.Find("node_00");
+                var nodes = node.GetComponentsInChildren<InKin.RobotJoint>();
+                Debug.Log("node=" + node);
+                Debug.Log("nodes count=" + nodes.Length);
+                foreach (InKin.RobotJoint j in nodes)
+                {
+                    Debug.Log("joint:" + j.name);
+                    j.transform.localEulerAngles = Vector3.zero;
+                }
+            }
         }
         catch
         {
-            Debug.Log("Task.Run error was catched");
+            if (m_DebugMode) Debug.Log("Task.Run error was catched");
         }
         //int x = await Task.Run(() => My());
-        Debug.Log("4) after sending");
+        
+
+        if (m_DebugMode) Debug.Log("4) after sending");
     }
     
 }

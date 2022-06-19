@@ -35,6 +35,16 @@ public static class MyTCPClientLibrary
 		SendRequest(request, _Mes);
 		string result = GetResponse(request);
 		Debug.Log(result);
+
+		// Remove all newlines from the 'example' string variable
+		string cleaned = result.Replace("\n", "").Replace("\r", "");
+		if (cleaned == "html:reset")
+        {
+            Debug.Log("reset happend START");
+			return 1;
+			
+
+		}
 		return 0;
 	}
 

@@ -62,7 +62,7 @@ class Env01(Env):
         return obs, self.collected_reward, done, info
     
     def reset(self, seed: Optional[int] = None, return_info: bool = False, options: Optional[dict] = None) -> Union[ObsType, Tuple[ObsType, dict]]:
-        self.reseter.run()
+        #self.reseter.run()
         self.state = 0
         return np.ones((1,), dtype="float32")
 
