@@ -65,12 +65,12 @@ public static class MyTCPClientLibrary
 	{
 		WebResponse response = null;
 		try { response = _Request.GetResponse(); }
-		catch (System.Exception e) { return ""; }
+		catch (System.Exception e) { Debug.Log("Exception: response");  return ""; }
 		StreamReader sr = new StreamReader(response.GetResponseStream());
 		string result = "";
 		while (sr.Peek() != -1)
 			try { result += sr.ReadToEnd(); }
-			catch (System.ObjectDisposedException e) { }
+			catch (System.ObjectDisposedException e) { Debug.Log("Exception: ReadToEnd"); }
 		//Debug.Log("header= " + response.Headers);
 		response.Close();
 		return result;

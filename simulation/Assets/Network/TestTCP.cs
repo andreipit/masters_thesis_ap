@@ -55,7 +55,9 @@ public class TestTCP : MonoBehaviour
 
     async void SendMessage(string _Mes, bool _Debug = false)
     {
-        byte[] mes = System.Text.Encoding.ASCII.GetBytes(_Mes); // string someString = Encoding.ASCII.GetString(bytes);
+        //byte[] mes = System.Text.Encoding.ASCII.GetBytes(_Mes); //
+        byte[] mes = System.Text.Encoding.ASCII.GetBytes("{key1:hello, key2:world}"); // string someString = Encoding.ASCII.GetString(bytes);
+        //string someString = Encoding.ASCII.GetString(bytes);
         //string result = MyTCPClientLibrary.SendAndReceive(mes);
         string result = "";
         try { result = await Task.Run(() => MyTCPClientLibrary.SendAndReceive(mes)); } catch { }

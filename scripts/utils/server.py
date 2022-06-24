@@ -35,17 +35,17 @@ class Server():
         sock.bind((Server.host, Server.port))
         sock.listen(5) 
         while True:
-            # 1) connect, accept loop pauses thread until connection is done
             csock, caddr = sock.accept() # this while loop waits connection
+            # 1) connect, accept loop pauses thread until connection is done
             #print("Connection from: " + str(caddr))
             Server.last_response_time = time.time()
 
             # 2) get question
             #req = csock.recv(1024)  # get the request, 1kB max
-            req = csock.recv(4096)  # get the request, 1kB max
+            req = csock.recv(1024)  # get the request, 1kB max
             #print('question == ', req)
 
-            encoding = 'utf-8'
+            #encoding = 'utf-8'
             
             #print('question == ', unicode(req, encoding))
 
