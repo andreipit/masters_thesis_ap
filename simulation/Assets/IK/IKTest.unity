@@ -293,6 +293,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2eb83e9775eeb44e8521e226a414e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ActivateCheck: 0
+  state: 0
+  Connected: 0
+  LastReceived: 
+  LastReceivedTime: 0
+  SendButton: 0
+  SendMes: send smth
+  Delivered: 0
+  DeliveredTime: 0
+  FailDeliveredTime: 0
+  LastServerAnswer: 
 --- !u!4 &61047380
 Transform:
   m_ObjectHideFlags: 0

@@ -28,24 +28,14 @@ public static class MyTCPClientLibrary
 
 	#region Public static methods
 	
-	public static int Send(byte[] _Mes)
+	public static string SendAndReceive(byte[] _Mes)
 	{
-        Thread.Sleep(1000);
+        //Thread.Sleep(1000);
 		var request = CreateRequest();
 		SendRequest(request, _Mes);
 		string result = GetResponse(request);
-		Debug.Log(result);
-
-		// Remove all newlines from the 'example' string variable
-		string cleaned = result.Replace("\n", "").Replace("\r", "");
-		if (cleaned == "html:reset")
-        {
-            Debug.Log("reset happend START");
-			return 1;
-			
-
-		}
-		return 0;
+		string cleaned = result.Replace("\n", "").Replace("\r", ""); // Remove all newlines from the 'example' string variable
+		return cleaned;
 	}
 
 	#endregion
@@ -73,11 +63,14 @@ public static class MyTCPClientLibrary
 
 	static string GetResponse(WebRequest _Request)
 	{
-		WebResponse response = _Request.GetResponse();
+		WebResponse response = null;
+		try { response = _Request.GetResponse(); }
+		catch (System.Exception e) { return ""; }
 		StreamReader sr = new StreamReader(response.GetResponseStream());
 		string result = "";
 		while (sr.Peek() != -1)
-			result += sr.ReadToEnd();
+			try { result += sr.ReadToEnd(); }
+			catch (System.ObjectDisposedException e) { }
 		//Debug.Log("header= " + response.Headers);
 		response.Close();
 		return result;
@@ -99,7 +92,24 @@ public static class MyTCPClientLibrary
 }
 
 
+//public static string Send(byte[] _Mes)
+//{
+//	//Thread.Sleep(1000);
+//	var request = CreateRequest();
+//	SendRequest(request, _Mes);
+//	string result = GetResponse(request);
+//	//Debug.Log(result);
 
+//	// Remove all newlines from the 'example' string variable
+//	string cleaned = result.Replace("\n", "").Replace("\r", "");
+//	return cleaned;
+//	//if (cleaned == "html:reset")
+//	//      {
+//	//          //Debug.Log("reset happend START");
+//	//	return 1;
+//	//}
+//	//return 0;
+//}
 
 //import http.server
 

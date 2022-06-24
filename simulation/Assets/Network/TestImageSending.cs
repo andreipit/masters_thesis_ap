@@ -27,7 +27,7 @@ public class TestImageSending : MonoBehaviour
         string txt = !BigMessage ? "tester" : MyTCPClientLibrary.ImageToString(Tex); ;
         byte[] mes = System.Text.Encoding.ASCII.GetBytes(txt); // string someString = Encoding.ASCII.GetString(bytes);
         Debug.Log("2) before sending");
-        int x = await Task.Run(() => MyTCPClientLibrary.Send(mes));
+        string x = await Task.Run(() => MyTCPClientLibrary.SendAndReceive(mes));
         //int x = await Task.Run(() => My());
         Debug.Log("4) after sending");
     }
