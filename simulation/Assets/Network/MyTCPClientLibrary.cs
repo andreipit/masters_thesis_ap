@@ -47,8 +47,10 @@ public static class MyTCPClientLibrary
 	{
 		string url = @"http://127.0.0.1:4567";
 		var res = WebRequest.Create(url);
-		res.PreAuthenticate = true;
-		res.Method = "PUT";
+		//res.PreAuthenticate = true;
+		res.PreAuthenticate = false;
+        res.Method = "PUT";
+        //res.Method = "GET";
 		res.ContentType = "application/json";
 		res.Headers.Add("Authorization", "Basic ");
 		return res;

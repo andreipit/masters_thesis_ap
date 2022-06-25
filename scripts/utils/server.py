@@ -37,10 +37,8 @@ class Server():
             sock.bind((Server.host, Server.port))
             sock.listen(1) 
 
-
             csock, caddr = sock.accept() # this while loop waits connection
             Server.last_response_time = time.time()
-
 
             req = csock.recv(1024)  # get the request, 1kB max
             print('question == ', req)
@@ -59,7 +57,8 @@ class Server():
             csock.sendall(str.encode("received",'iso-8859-1'))
 
             print('answered', time.time())
-            csock.close() # http://localhost:1234/ => Congratulations! The HTTP Server is working!
+            #csock.close() # <- this was a reason of many errors!!! Not receiving message. http://localhost:1234/ => Congratulations! The HTTP Server is working!
+            #sock.shutdown(0)
             #sock.shutdown(socket.SHUT_RDWR)
             sock.close()
             del sock
