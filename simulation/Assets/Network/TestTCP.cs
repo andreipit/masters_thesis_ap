@@ -50,21 +50,47 @@ public class TestTCP : MonoBehaviour
         {
             SendButton = false;
             SendMessage(SendMes);
+        }   
+
+        //if (SendButton)
+        //{
+        //    StartCoroutine(Sender());
+        //}
+    }
+
+
+    IEnumerator Sender()
+    {
+        SendButton = false;
+        LastServerAnswer = "";
+        while (true)
+        {
+            yield return new WaitForSeconds(0.01f);
+
+            SendMessage(SendMes);
+
+            if (LastServerAnswer == "html:received = True")
+            {
+                break;
+            }
         }
     }
 
     async void SendMessage(string _Mes, bool _Debug = false)
     {
-        //byte[] mes = System.Text.Encoding.ASCII.GetBytes(_Mes); //
-        byte[] mes = System.Text.Encoding.ASCII.GetBytes("{key1:hello, key2:world}"); // string someString = Encoding.ASCII.GetString(bytes);
-        //string someString = Encoding.ASCII.GetString(bytes);
-        //string result = MyTCPClientLibrary.SendAndReceive(mes);
+        ////byte[] mes = System.Text.Encoding.ASCII.GetBytes("{key1:hello, key2:world}"); // string someString = Encoding.ASCII.GetString(bytes);
+        byte[] mes = System.Text.Encoding.ASCII.GetBytes("{key1:hello, key2:world, key3:" + Time.time + "}"); // string someString = Encoding.ASCII.GetString(bytes);
+        //string result = "";
+        //try { result = await Task.Run(() => MyTCPClientLibrary.SendAndReceive(mes)); } catch { }
+
+        //byte[] mes = System.Text.Encoding.ASCII.GetBytes("{key1:hello, key2:world}"); // string someString = Encoding.ASCII.GetString(bytes);
         string result = "";
         try { result = await Task.Run(() => MyTCPClientLibrary.SendAndReceive(mes)); } catch { }
 
         LastServerAnswer = result;
 
-        if (result == "I_have_received_" + _Mes)
+        //if (result == "I_have_received_" + _Mes)
+        if (result == "html:received")
         {
             Delivered = true;
             DeliveredTime = Time.time;
