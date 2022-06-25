@@ -1,8 +1,10 @@
 *
 
-!simulation/
-!simulation/Assets/
-!simulation/Assets/**
+!simulation_unity/
+!simulation_unity/Assets/
+!simulation_unity/Assets/**
 !scripts/**
 !scripts/
+!simulation_coppelia/**
+!simulation_coppelia/
 !.gitignore
