@@ -1,39 +1,42 @@
-from environment.modules.importer import *
-#self.initer, self.steper, self.reseter, self.renderer, self.model = EnvInit(), EnvStep(), EnvReset(), EnvRender(), EnvModel()
 
+from gym import Env
+from gym.spaces import Box, Discrete
+import random
+import numpy as np
+from typing import Optional, Tuple, Union, TypeVar
+ObsType = TypeVar("ObsType")
+
+
+from utils.env.init import EnvInit
+from utils.env.step import EnvStep
+from utils.env.reset import EnvReset
+from utils.env.render import EnvRender
+from utils.env.model import EnvModel
 
 class Env01(Env):
 
-    r : Robot = None
+    #server: Server = None
+
+    initer: EnvInit = None
+    steper: EnvStep = None
+    reseter: EnvReset = None
+    renderer: EnvRender = None
+    model: EnvModel = None
 
     def __init__(self):
-        Server.connect()
+        self.initer = EnvInit()
+        self.steper = EnvStep()
+        self.reseter = EnvReset()
+        self.renderer = EnvRender()
+        self.model = EnvModel()
 
-        # 2) robot simulation and generate cubes
-        r: Robot = Robot()
-        r.create_empty_helpers()
-        r.connect()
-        r.add_objects()
-        # maybe later:
-        #r.m.cam_pose = r.sim.create_perspcamera_trans_matrix4x4(r.m)
-        #r.m.bg_color_img, self.m.bg_depth_img = r.sim.get_2_perspcamera_photos_480x640(self.m)
-        
-        
-        # state (s_t) - rgb-d image 224x224x4 (heightmap representation)
-        self.observation_space = Box(low=-1., high=1., shape=(2, 2), dtype="float32")
-        #self.state = np.zeros((2,2), dtype="float32") # random.randint(0, 10)
-        self.state = self.observation_space.sample()
-        
-        # action (a_t) = (psi, q) | psi E {push,grasp}, q -> p E s_t, where p is pixel, q is 3d coords of p
-        # example: (0, 5, 6, 8) => push at Vector3(5,6,8) to right 10sm
-        self.action_space = Box(low=-1., high=1., shape=(4,), dtype="float32")
-
-        # reward
+        self.observation_space = Box(low=-1., high=1., shape=(1,), dtype="float32")
+        self.action_space = Box(low=-1., high=1., shape=(1,), dtype="float32")
+        self.state = random.randint(0, 10)
+        self.rounds = 3
         self.collected_reward = -1
-        #self.rounds = 3
-        print('Env is made. State =', self.state)
     
-    def step(self, action):
+    def steper(self, action):
         done = False
         info = {}
         rw = 0
@@ -63,7 +66,7 @@ class Env01(Env):
         self.state = 0
         return np.ones((1,), dtype="float32")
 
-    def render(self, action, rw):
+    def renderer(self, action, rw):
         print("=============================================================================")
         print(f"v1new: Round : {self.rounds}\nDistance Travelled : {action[0]}\nReward Received: {rw}")
         print(f"Total Reward : {self.collected_reward}")
@@ -79,3 +82,4 @@ if __name__ == '__main__':
         state, reward, done, info = env.steper(action)
         
         
+
