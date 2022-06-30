@@ -2,6 +2,7 @@ from utils.arg.model import ArgsModel
 from .model import RobotModel
 from .sim import RobotSim
 from .objects import RobotObjects
+from .simulation.engine import Engine
 
 from .mask import RobotMask
 from .push import RobotPush
@@ -31,14 +32,19 @@ class Robot():
         self.mover = RobotMove()
         self.cam = RobotCamera()
         self.grasper = RobotGrasp()
+        self.m.engine = Engine()
 
-    def connect(self):
+
+    def connect_and_restart(self):
         if not self.sim.connect(self.m):
             self.sim.restart_sim(self.m)
         self.sim.stop_start_game_fix(self.m)
 
-    def add_objects(self):
-        self.obj.add_objects(self.m) #(self.sim.engine, self.m)
+    def add_objects(self, num_obj = 8):
+        self.obj.add_objects(self.m, num_obj = num_obj)
+
+    def get_photo(self):
+        return self.sim.get_2_perspcamera_photos_480x640(self.m.engine, self.m.cam_depth_scale)
 
     # test mask    
     def get_test_obj_mask(self, obj_ind):

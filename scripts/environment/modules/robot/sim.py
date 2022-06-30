@@ -4,7 +4,7 @@ import numpy as np
 import utils.utils as utils
 #from utils.arg.model import ArgsModel
 from .model import RobotModel
-from .simulation.simulator import Simulator
+from .simulation.engine import Engine
 from utils.custom_types import NDArray
 
 class RobotSim():
@@ -13,7 +13,7 @@ class RobotSim():
         pass
 
     def connect(self, m:RobotModel) -> bool:
-        m.engine = Simulator()
+        m.engine = Engine()
         res =  m.engine.connect()
         return res != -1 #  if res!=-1 it is ok (true); if res==-1 it is bad (false)
         #if m.engine.connect() != -1:
@@ -81,59 +81,48 @@ class RobotSim():
         cam_pose = np.dot(cam_trans, cam_rotm) # Compute rigid transformation representating camera pose
         return cam_pose
 
-    def create_constants(self, m:RobotModel):
-        # 4) Declare 2 constants
-        m.cam_intrinsics = np.asarray([[618.62, 0, 320], [0, 618.62, 240], [0, 0, 1]])
-        m.cam_depth_scale = 1
-
-        ## 5) Get background image
-        #m.bg_color_img, m.bg_depth_img = self._get_camera_data(m)
-        #m.bg_depth_img = m.bg_depth_img * m.cam_depth_scale # does nothing
-
-    # Gets 2 images from "Vision_sensor_persp":
-    #     RGB=480x640x3 int 0..255, Depth=480x640 float 0..2550
-    def get_2_perspcamera_photos_480x640(self, m: RobotModel) -> (NDArray["480,640,3", np.uint8], NDArray["480,640", float]):
-
-        # Get color image from simulation
-        # Retrieves the rgb-image (or a portion of it) of a vision sensor
-        sim_ret, resolution, raw_image = m.engine.camera_image_rgb_get(_ObjID = m.cam_handle) # Vision_sensor_persp
+    def get_2_perspcamera_photos_480x640(self, engine: Engine, cam_depth_scale: float) -> (NDArray["480,640,3", np.uint8], NDArray["480,640", float]):
+        """
+        Gets 2 images from "Vision_sensor_persp":
+        RGB=480x640x3 int 0..255, Depth=480x640 float 0..2550
+        """
+        # 1) Get rgb
+        sim_ret, cam_handle = engine.gameobject_find('Vision_sensor_persp')
+        sim_ret, resolution, raw_image = engine.camera_image_rgb_get(_ObjID = cam_handle) # Vision_sensor_persp
         
-        # type(raw_image), len(raw_image) => 'list' 921600 # = 640x480x3=921600
-        # resolution =>  [640, 480]
-        # sim_ret => 0
-
+        # 2) Normalize it
         # We have RGB image - 640x480x3. 
-        # 1)Reshape, 2)to(0,1),remove negative,to(0,255), 3)mirror, 4) to int
-        # 1)Reshape
+        # a)Reshape, b)to(0,1),remove negative,to(0,255), c)mirror, d) to int
+        # a)Reshape
         color_img = np.asarray(raw_image) # convert to 1d array: (921600,)
         color_img.shape = (resolution[1], resolution[0], 3) # 921600=> 480x640x3
-        # 2)to(0,1),remove negative,to(0,255),
+        # b)to(0,1),remove negative,to(0,255),
         color_img = color_img.astype(float)/255 # convert pixels 0..255 => 0..1
         # len(color_img[color_img < 0]) => 422234
         color_img[color_img < 0] += 1 # maybe fixes bug, when color is in (-1,0)
         color_img *= 255 # convert pixel back: 0..1 => 0..255
-        # 3)mirror
+        # c)mirror
         color_img = np.fliplr(color_img) # like mirror columns order. Shape still (480, 640, 3)
-        # 4) to int
+        # d) to int
         color_img = color_img.astype(np.uint8)
 
-        # Get depth image from simulation
-        # Only difference - now we use different method name
-        sim_ret, resolution, depth_buffer = m.engine.camera_image_depth_get(_ObjID = m.cam_handle) # Vision_sensor_persp
-
+        # 3) Get depth
+        # Get depth image from simulation (just now we use different method name)
+        sim_ret, resolution, depth_buffer = engine.camera_image_depth_get(_ObjID = cam_handle) # Vision_sensor_persp
         # We have alpha image (1 layer only) - 640x480.
-        # 1) reshape
+        
+        # 4) Normalize it
+        # a) reshape
         depth_img = np.asarray(depth_buffer)
         depth_img.shape = (resolution[1], resolution[0])
-        # 2) mirror
+        # b) mirror
         depth_img = np.fliplr(depth_img)
         zNear = 0.01
         zFar = 10
-        # 3) scale every pixel ~x10: 0..255 => 0..2550
+        # c) scale every pixel ~x10: 0..255 => 0..2550
         depth_img = depth_img * (zFar - zNear) + zNear
         # 125 * (10 - 0.01) + 0.01 = 1248.76
 
         #color_img[200][200][0] => 46, ie int
         #depth_img[200][200] => 10.0, ie float
-        #return color_img, depth_img # RGB=480x640x3 int 0..255, Depth=480x640 float 0..2550
-        return color_img, depth_img * m.cam_depth_scale # RGB=480x640x3 int 0..255, Depth=480x640 float 0..2550
+        return color_img, depth_img * cam_depth_scale # RGB=480x640x3 int 0..255, Depth=480x640 float 0..255

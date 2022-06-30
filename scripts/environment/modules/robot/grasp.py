@@ -9,7 +9,7 @@ from .sim import RobotSim
 from .gripper import RobotGripper
 from .move import RobotMove
 from .objects import RobotObjects
-from .simulation.simulator import Simulator
+from .simulation.engine import Engine
 from utils.custom_types import NDArray
 
 class RobotGrasp():

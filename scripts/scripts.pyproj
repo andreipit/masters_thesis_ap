@@ -43,7 +43,7 @@
     <Compile Include="environment\__init__.py" />
     <Compile Include="environment\modules\robot\simulation\coppelia\coppelia_api.py" />
     <Compile Include="environment\modules\robot\simulation\unity3d\unity3d_api.py" />
-    <Compile Include="environment\modules\robot\simulation\simulator.py" />
+    <Compile Include="environment\modules\robot\simulation\engine.py" />
     <Compile Include="test\test_env.py" />
     <Compile Include="test\test_env_01_reset.py" />
     <Compile Include="environment\modules\init.py" />
@@ -102,7 +102,7 @@
     <Content Include="environment\modules\robot\objects\blocks\4.obj" />
     <Content Include="environment\modules\robot\objects\blocks\6.obj" />
     <Content Include="environment\modules\robot\objects\blocks\7.obj" />
-    <Content Include="environment\modules\robot\objects\blocks\8.obj" />
+    <Content Include="environment\modules\robot\objects\blocks\5.obj" />
     <Content Include="environment\modules\robot\objects\novel_objects.png" />
     <Content Include="environment\modules\robot\objects\novel_objects\adjustable_wrench.obj" />
     <Content Include="environment\modules\robot\objects\novel_objects\a_cup.obj" />

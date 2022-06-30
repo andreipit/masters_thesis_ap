@@ -5,7 +5,7 @@ import utils.utils as utils
 from utils.arg.model import ArgsModel
 from .model import RobotModel
 from .sim import RobotSim
-from .simulation.simulator import Simulator
+from .simulation.engine import Engine
 from utils.custom_types import NDArray
 
 class RobotCamera():

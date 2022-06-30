@@ -4,7 +4,7 @@ import numpy as np
 import utils.utils as utils
 from utils.arg.model import ArgsModel
 from .model import RobotModel
-from .simulation.simulator import Simulator
+from .simulation.engine import Engine
 from utils.custom_types import NDArray
 
 import numpy as np

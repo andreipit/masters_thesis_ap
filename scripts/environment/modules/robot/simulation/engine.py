@@ -2,7 +2,7 @@
 from .coppelia.coppelia_api import CoppeliaAPI
 from .unity3d.unity3d_api import Unity3dAPI
 
-class Simulator(object):
+class Engine(object):
 
     api:CoppeliaAPI = CoppeliaAPI()
     #api:CoppeliaAPI = Unity3dAPI()
