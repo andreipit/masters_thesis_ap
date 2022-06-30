@@ -59,10 +59,10 @@ class Robot():
         return self.mask.get_obj_masks(self.sim, self.m);
 
     # grasp/push
-    def grasp(self, position, heightmap_rotation_angle, workspace_limits):
-        return self.grasper.grasp(self.a, self.sim, self.m, self.cam, self.gripper, self.mover, self.obj, position, heightmap_rotation_angle, workspace_limits)
-    def push(self, position, heightmap_rotation_angle, workspace_limits):
-        return self.pusher.push(self.sim, self.m, self.gripper, self.mover, position, heightmap_rotation_angle, workspace_limits)
+    def grasp(self, pos, rot):
+        return self.grasper.grasp(self.a, self.sim, self.m, self.cam, self.gripper, self.mover, self.obj, pos, rot, self.m.workspace_limits)
+    def push(self, pos, rot):
+        return self.pusher.push(self.sim, self.m, self.gripper, self.mover, pos, rot, self.m.workspace_limits)
 
     # render
     def get_camera_data(self):

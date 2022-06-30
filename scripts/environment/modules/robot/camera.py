@@ -17,7 +17,8 @@ class RobotCamera():
 
         # Get color image from simulation
         #sim_ret, resolution, raw_image = vrep.simxGetVisionSensorImage(self.sim_client, self.cam_handle, 0, vrep.simx_opmode_blocking)
-        sim_ret, resolution, raw_image = m.engine.camera_image_rgb_get(m.cam_handle)
+        sim_ret, cam_handle = m.engine.gameobject_find('Vision_sensor_persp')
+        sim_ret, resolution, raw_image = m.engine.camera_image_rgb_get(cam_handle)
         
         color_img = np.asarray(raw_image)
         color_img.shape = (resolution[1], resolution[0], 3)
@@ -29,7 +30,7 @@ class RobotCamera():
 
         # Get depth image from simulation
         #sim_ret, resolution, depth_buffer = vrep.simxGetVisionSensorDepthBuffer(self.sim_client, self.cam_handle, vrep.simx_opmode_blocking)
-        sim_ret, resolution, depth_buffer = m.engine.camera_image_depth_get(m.cam_handle)
+        sim_ret, resolution, depth_buffer = m.engine.camera_image_depth_get(cam_handle)
         depth_img = np.asarray(depth_buffer)
         depth_img.shape = (resolution[1], resolution[0])
         depth_img = np.fliplr(depth_img)
