@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>scripts</Name>
     <RootNamespace>scripts</RootNamespace>
-    <InterpreterId>Global|VisualStudio|eff_env38</InterpreterId>
+    <InterpreterId>CondaEnv|CondaEnv|eff_env38</InterpreterId>
     <SuppressConfigureTestFrameworkPrompt>true</SuppressConfigureTestFrameworkPrompt>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -33,11 +33,12 @@
     <Compile Include="utils\env\render.py" />
     <Compile Include="utils\env\reset.py" />
     <Compile Include="utils\env\step.py" />
-    <Compile Include="utils\server.py" />
+    <Compile Include="utils\network\server_coppelia.py" />
+    <Compile Include="utils\network\server_unity3d.py" />
     <Compile Include="setup.py" />
     <Compile Include="single_entry_point.py" />
     <Compile Include="test\test_server.py" />
-    <Compile Include="test_gym_registration.py" />
+    <Compile Include="test\test_gym_registration.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="CondaEnv|CondaEnv|eff_env38" />
@@ -50,12 +51,13 @@
     <Folder Include="utils\" />
     <Folder Include="test\" />
     <Folder Include="utils\env\" />
+    <Folder Include="utils\network\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="environment\envs\__pycache__\basic_env.cpython-38.pyc" />
     <Content Include="environment\envs\__pycache__\basic_env_2.cpython-38.pyc" />
     <Content Include="environment\envs\__pycache__\__init__.cpython-38.pyc" />
-    <Content Include="index.html" />
+    <Content Include="utils\network\index.html" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

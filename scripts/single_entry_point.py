@@ -2,13 +2,19 @@ import time
 import socket
 import os
 import time
-
 import gym
-
-from utils.server import Server
+#from utils.network.server_unity3d import Server
+from utils.network.server_coppelia import Server
 from environment.envs.env_01 import Env01
 
 if __name__ == '__main__':
+    print('hi')
+    Server.connect()
+
+
+
+
+if __name__ == '__main__2':
     Server.connect()
 
     #env = gym.make('environment:env-v1')
@@ -29,4 +35,5 @@ if __name__ == '__main__':
 
 
 
+    
     
