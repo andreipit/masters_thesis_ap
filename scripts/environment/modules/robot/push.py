@@ -45,7 +45,9 @@ class RobotPush():
 
         # Compute gripper position and linear movement increments
         tool_position = location_above_pushing_point
-        sim_ret, UR5_target_position = sim.engine.global_position_get(_ObjID = m.UR5_target_handle)
+        sim_ret, UR5_target_handle = m.engine.gameobject_find('UR5_target')
+
+        sim_ret, UR5_target_position = m.engine.global_position_get(_ObjID = UR5_target_handle)
         #sim_ret, UR5_target_position = vrep.simxGetObjectPosition(self.sim_client, self.UR5_target_handle,-1,vrep.simx_opmode_blocking)
         move_direction = np.asarray([tool_position[0] - UR5_target_position[0], tool_position[1] - UR5_target_position[1], tool_position[2] - UR5_target_position[2]])
         move_magnitude = np.linalg.norm(move_direction)
@@ -53,7 +55,7 @@ class RobotPush():
         num_move_steps = int(np.floor(move_direction[0]/move_step[0]))
 
         # Compute gripper orientation and rotation increments
-        sim_ret, gripper_orientation = sim.engine.global_rotation_get(_ObjID = m.UR5_target_handle)
+        sim_ret, gripper_orientation = m.engine.global_rotation_get(_ObjID = UR5_target_handle)
         #sim_ret, gripper_orientation = vrep.simxGetObjectOrientation(self.sim_client, self.UR5_target_handle, -1, vrep.simx_opmode_blocking)
         rotation_step = 0.3 if (tool_rotation_angle - gripper_orientation[1] > 0) else -0.3
         num_rotation_steps = int(np.floor((tool_rotation_angle - gripper_orientation[1])/rotation_step))
@@ -66,10 +68,10 @@ class RobotPush():
         #vrep.simxSetObjectOrientation(self.sim_client, self.UR5_target_handle, -1, (np.pi/2, tool_rotation_angle, np.pi/2), vrep.simx_opmode_blocking)
 
         for step_iter in range(max(num_move_steps, num_rotation_steps)):
-            sim.engine.global_position_set(_ObjID = m.UR5_target_handle, _NewPos3D = (UR5_target_position[0] + move_step[0]*min(step_iter,num_move_steps), UR5_target_position[1] + move_step[1]*min(step_iter,num_move_steps), UR5_target_position[2] + move_step[2]*min(step_iter,num_move_steps)))
-            sim.engine.global_rotation_set(_ObjID = m.UR5_target_handle, _NewRot3D = (np.pi/2, gripper_orientation[1] + rotation_step*min(step_iter,num_rotation_steps), np.pi/2))
-        sim.engine.global_position_set(_ObjID = m.UR5_target_handle, _NewPos3D = (tool_position[0],tool_position[1],tool_position[2]))
-        sim.engine.global_rotation_set(_ObjID = m.UR5_target_handle, _NewRot3D = (np.pi/2, tool_rotation_angle, np.pi/2))
+            m.engine.global_position_set(_ObjID = UR5_target_handle, _NewPos3D = (UR5_target_position[0] + move_step[0]*min(step_iter,num_move_steps), UR5_target_position[1] + move_step[1]*min(step_iter,num_move_steps), UR5_target_position[2] + move_step[2]*min(step_iter,num_move_steps)))
+            m.engine.global_rotation_set(_ObjID = UR5_target_handle, _NewRot3D = (np.pi/2, gripper_orientation[1] + rotation_step*min(step_iter,num_rotation_steps), np.pi/2))
+        m.engine.global_position_set(_ObjID = UR5_target_handle, _NewPos3D = (tool_position[0],tool_position[1],tool_position[2]))
+        m.engine.global_rotation_set(_ObjID = UR5_target_handle, _NewRot3D = (np.pi/2, tool_rotation_angle, np.pi/2))
 
         # Ensure gripper is closed
         gripper.close_gripper(sim, m)
@@ -87,7 +89,7 @@ class RobotPush():
         mover.move_to(sim, m, [target_x, target_y, position[2]], None)
 
         # Move gripper to location above grasp target
-        mover.move_to(sim, [target_x, target_y, location_above_pushing_point[2]], None)
+        mover.move_to(sim, m, [target_x, target_y, location_above_pushing_point[2]], None)
 
         push_success = True
 

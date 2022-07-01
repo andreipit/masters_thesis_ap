@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>scripts</Name>
     <RootNamespace>scripts</RootNamespace>
-    <InterpreterId>CondaEnv|CondaEnv|eff_env38</InterpreterId>
+    <InterpreterId>Global|VisualStudio|eff_env38</InterpreterId>
     <SuppressConfigureTestFrameworkPrompt>true</SuppressConfigureTestFrameworkPrompt>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

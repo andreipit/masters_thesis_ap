@@ -22,7 +22,7 @@ class RobotCamera():
         
         color_img = np.asarray(raw_image)
         color_img.shape = (resolution[1], resolution[0], 3)
-        color_img = color_img.astype(np.float)/255
+        color_img = color_img.astype(float)/255
         color_img[color_img < 0] += 1
         color_img *= 255
         color_img = np.fliplr(color_img)
