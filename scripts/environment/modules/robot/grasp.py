@@ -17,8 +17,15 @@ class RobotGrasp():
     def __init__(self):
         pass
 
+    def grasp(self, sim: RobotSim, m: RobotModel, cam: RobotCamera, gripper: RobotGripper, mover: RobotMove, obj: RobotObjects,
+              position, 
+              heightmap_rotation_angle, 
+              workspace_limits):
+        pass
+
+
      # Primitives ----------------------------------------------------------
-    def grasp(self, a: ArgsModel, sim: RobotSim, m: RobotModel, cam: RobotCamera, gripper: RobotGripper, mover: RobotMove, obj: RobotObjects,
+    def grasp_backup(self, a: ArgsModel, sim: RobotSim, m: RobotModel, cam: RobotCamera, gripper: RobotGripper, mover: RobotMove, obj: RobotObjects,
               position, 
               heightmap_rotation_angle, 
               workspace_limits):

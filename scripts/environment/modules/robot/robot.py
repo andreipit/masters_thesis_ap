@@ -60,7 +60,8 @@ class Robot():
 
     # grasp/push
     def grasp(self, pos, rot):
-        return self.grasper.grasp(self.a, self.sim, self.m, self.cam, self.gripper, self.mover, self.obj, pos, rot, self.m.workspace_limits)
+        #return self.grasper.grasp(self.a, self.sim, self.m, self.cam, self.gripper, self.mover, self.obj, pos, rot, self.m.workspace_limits)
+        return self.grasper.grasp(self.sim, self.m, self.cam, self.gripper, self.mover, self.obj, pos, rot, self.m.workspace_limits)
     def push(self, pos, rot):
         return self.pusher.push(self.sim, self.m, self.gripper, self.mover, pos, rot, self.m.workspace_limits)
 
