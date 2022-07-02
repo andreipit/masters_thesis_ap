@@ -7,10 +7,13 @@ if __name__ == '__main__':
     state = env.reset()
     env.render()
     done = False
+    a_g = (1.0, -0.5, 0, 0.2) # center of desk on height 0.2 grasp at (.5, .5, .5)
+    a_p = (0.0, -0.5, 0, 0.2) # center of desk on height 0.2 grasp at (.5, .5, .5)
 
+    s, r, done, info = env.step(a_g)
     while not done:
         time.sleep(0.1)
-        print('type command: 1 - test, q - quit, res - reset, ren - render, grasp - grasp, push - push')
+        print('type command: 1 - test, q - quit, res - reset, ren - render, g - grasp, p - push')
         time.sleep(.1)
         x = input()
         if x == '1':
@@ -21,12 +24,10 @@ if __name__ == '__main__':
             state = env.reset()
         elif x == 'ren':
             env.render()
-        elif x == 'grasp':
-            a = (1.0, 0.5, 0.5, 0.5) # grasp at (.5, .5, .5)
-            s, r, done, info = env.step(a)
-        elif x == 'push':
-            a = (0.0, 0.5, 0.5, 0.5) # grasp at (.5, .5, .5)
-            s, r, done, info = env.step(a)
+        elif x == 'g':
+            s, r, done, info = env.step(a_g)
+        elif x == 'p':
+            s, r, done, info = env.step(a_p)
 
 
 #elif x == 'photo':

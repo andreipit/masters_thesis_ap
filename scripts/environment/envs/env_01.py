@@ -29,7 +29,7 @@ class Env01(Env):
         a_coord: list = [a[1], a[2], a[3]]
 
         if a_type == 'grasp':
-            self.r.grasp(pos = a_coord, rot = 0)
+            self.r.grasp(pos = a_coord, rot = 22.5)
         elif a_type == 'push':
             self.r.push(pos = a_coord, rot = 0)
 
@@ -47,7 +47,7 @@ class Env01(Env):
         self.r = Robot()
         self.r.create_empty_helpers()
         self.r.connect_and_restart()
-        self.r.add_objects(5)
+        #self.r.add_objects(5)
 
         # 3 ways to get state:
         #self.state = np.zeros((480, 640, 3), dtype="float32") # random.randint(0, 10)
