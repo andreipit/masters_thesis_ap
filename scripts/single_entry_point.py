@@ -7,10 +7,10 @@ if __name__ == '__main__':
     state = env.reset()
     env.render()
     done = False
-    a_g = (1.0, -0.5, 0, 0.2) # center of desk on height 0.2 grasp at (.5, .5, .5)
-    a_p = (0.0, -0.5, 0, 0.2) # center of desk on height 0.2 grasp at (.5, .5, .5)
+    a_g = [1.0, -0.6, 0, 0.1, 120] # center of desk on height 0.2 grasp at (.5, .5, .5)
+    a_p = [0.0, -0.6, 0, 0.1, 120] # center of desk on height 0.2 grasp at (.5, .5, .5)
 
-    s, r, done, info = env.step(a_g)
+    #s, r, done, info = env.step(a_g)
     while not done:
         time.sleep(0.1)
         print('type command: 1 - test, q - quit, res - reset, ren - render, g - grasp, p - push')
@@ -25,6 +25,8 @@ if __name__ == '__main__':
         elif x == 'ren':
             env.render()
         elif x == 'g':
+            y = input()
+            a_g[4] = float(y)
             s, r, done, info = env.step(a_g)
         elif x == 'p':
             s, r, done, info = env.step(a_p)

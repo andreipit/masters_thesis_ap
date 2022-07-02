@@ -27,11 +27,12 @@ class Env01(Env):
 
         a_type: str = 'push' if (a[0] == 0.0) else 'grasp'
         a_coord: list = [a[1], a[2], a[3]]
+        a_angle: list = a[4]
 
         if a_type == 'grasp':
-            self.r.grasp(pos = a_coord, rot = 22.5)
+            self.r.grasp(pos = a_coord, rot = a_angle)
         elif a_type == 'push':
-            self.r.push(pos = a_coord, rot = 0)
+            self.r.push(pos = a_coord, rot = a_angle)
 
         bg_color_img, bg_depth_img = self.r.get_photo()
         self.state = bg_color_img

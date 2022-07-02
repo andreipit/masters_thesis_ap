@@ -20,20 +20,84 @@ class RobotGrasp():
     def _move_to():
         pass
 
+    def lerp_f(self, start:float, stop:float, i:float) -> list:
+        """ 20 30 0.3 => 20 + (30-20)*0.3 = 23 
+            30 20 0.3 => 30 + (20-30)*0.3 = 30-3 
+        """
+        return start + (stop - start) * i
+
+    def lerp_vec(self, start:list, stop:list, i:float) -> list:
+        x = start[0] + (stop[0] - start[0]) * i
+        y = start[1] + (stop[1] - start[1]) * i
+        z = start[2] + (stop[2] - start[2]) * i
+        return [x, y, z]
+
     def grasp(self, pos_new, rot_new, limits, engine: Engine):
+
+        for x in range(36):
+            self.rotate(x*10, engine)
+        #self.rotate(rot_new, engine)
+        self.move(pos_new, limits, engine)
+
+    def rotate(self,  angle_new, engine: Engine):
+        """ angle_new is in degrees """
+
+        if angle_new > 360:
+            angle_new = 360 % angle_new
+            
+        if angle_new < -360:
+            angle_new = -360 % angle_new
+
+        if angle_new > 180:
+            angle_new -= 180
+        elif angle_new < 0:
+            angle_new = 180 - angle_new
+
+        print('angle_new',angle_new)
+            # trim all to 0..90
+        angle_new = angle_new * np.pi / 180 # convert to radians
+        _, dummy_id = engine.gameobject_find('UR5_target')
+        _, rot_old = engine.global_rotation_get(_ObjID = dummy_id) # radians!!!
+        print('rot_old',rot_old)
+        print('angle_new rad',angle_new)
+        for i in range(1, 10 + 1):
+            angle_next = self.lerp_f(rot_old[1], angle_new, i / 10)
+            print('angle_next',angle_next)
+            engine.global_rotation_set(_ObjID = dummy_id, _NewRot3D = (np.pi / 2, angle_next, np.pi / 2))
+
+    def move(self, pos_new, limits, engine: Engine):
+        pos_new = self._convert_pos(pos_new, limits)
+        _, dummy_id = engine.gameobject_find('UR5_target')
+        _, pos_old = engine.global_position_get(_ObjID = dummy_id) #print('pos_old', pos_old, ' \n pos_new', pos_new)
+        for i in range(1, 20 + 1):
+            pos_next = self.lerp_vec(pos_old, pos_new, i / 20) #print('pos_next', pos_next)
+            engine.global_position_set(_ObjID = dummy_id, _NewPos3D = pos_next)
+
+
+
+    def grasp44(self, pos_new, rot_new, limits, engine: Engine):
         """
         Grasp is just moving dummy "UR5_target"
         """
+        #_, dummy_id = engine.gameobject_find('UR5_target')
+        #engine.global_position_set(_ObjID = dummy_id, _NewPos3D = pos_new)
+        #return 
+
         _, dummy_id = engine.gameobject_find('UR5_target')
         _, pos_old = engine.global_position_get(_ObjID = dummy_id)
         _, rot_old = engine.global_rotation_get(_ObjID = dummy_id)
 
+        print('pos_old', pos_old)
+
         pos_new = self._convert_pos(pos_new, limits)
         rot_new = self._convert_rot(rot_new)
+        print('pos_new', pos_new)
 
         # where and how many times
         pos_step_vec, pos_steps_count = self._get_pos_step(pos_old, pos_new)
         rot_step_vec, rot_steps_count = self._get_rot_step(rot_old, rot_new)
+        print('pos_step_vec', pos_step_vec)
+        print('pos_steps_count', pos_steps_count)
 
         for i in range(max(pos_steps_count, rot_steps_count)):
             pos_next = self._get_next_pos(pos_old, pos_step_vec, i, pos_steps_count)
@@ -52,21 +116,24 @@ class RobotGrasp():
         #22.5 ==> -1.05:  16 images, step=22.5 degrees, 10%4=2, 22.5%3.14=0.52; 0.52 - 3.14/2 =-1.05
         # convert to radians and set start to pi/2 degrees
         # Compute tool orientation from heightmap rotation angle
-        res = (rot % np.pi) - np.pi/2 #  -1.0619449019234484
+        res = (rot % np.pi) - np.pi / 2 #  -1.0619449019234484
         return res
 
     def _get_pos_step(self, pos_old, pos_new):
+        if pos_old == pos_new:
+            return np.asarray([.0, .0, .0]), 0
         move_direction = np.asarray([pos_new[0] - pos_old[0], pos_new[1] - pos_old[1], pos_new[2] - pos_old[2]])
         move_magnitude = np.linalg.norm(move_direction)
         move_step = 0.05 * move_direction / move_magnitude # Vector3 step = 5% of vector len in each axis
         num_move_steps = int(np.floor(move_direction[0] / move_step[0]))
         return move_step, num_move_steps
 
-    def _get_rot_step(self, rot_old, rot_new):
-        rotation_step = 0.3 if (rot_new - rot_old[1] > 0) else -0.3
-        num_rotation_steps = int(np.floor((rot_new - rot_old[1]) / rotation_step))
-        return rotation_step, num_rotation_steps
-
+    def _get_rot_step(self, rot_old, rot_new, speed = 0.3):
+        step = speed if (rot_new - rot_old[1] > 0) else -speed
+        if step == 0:
+            return 0, 0
+        num_steps = int(np.floor((rot_new - rot_old[1]) / step))
+        return step, num_steps
   
     def _get_next_pos(self, pos_old, pos_step_vec, i, pos_steps_count):
         """ If i is bigger then steps_count, we don't move.
@@ -78,9 +145,9 @@ class RobotGrasp():
         return (x, y, z)
 
     def _get_next_rot(self, rot_old, rot_step_vec, i, rot_steps_count):
-        x = np.pi/2
+        x = np.pi / 2
         y = rot_old[1] + rot_step_vec * min(i, rot_steps_count)
-        z = np.pi/2
+        z = np.pi / 2
         return (x, y, z)
 
 
