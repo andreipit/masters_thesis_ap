@@ -30,6 +30,8 @@
     <Compile Include="environment\modules\importer.py" />
     <Compile Include="environment\modules\robot\camera.py" />
     <Compile Include="environment\modules\robot\grasp.py" />
+    <Compile Include="environment\modules\robot\grasp_backup_all.py" />
+    <Compile Include="environment\modules\robot\grasp_default.py" />
     <Compile Include="environment\modules\robot\gripper.py" />
     <Compile Include="environment\modules\robot\mask.py" />
     <Compile Include="environment\modules\robot\model.py" />
