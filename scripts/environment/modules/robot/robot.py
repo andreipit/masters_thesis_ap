@@ -63,11 +63,12 @@ class Robot():
     def grasp(self, pos: NDArray["3,1", float], rot: float):
         #self.grasper.move(pos, self.m.workspace_limits, self.m.engine)
         #self.grasper.rotate(rot, self.m.engine)
-        return self.grasper.grasp( pos, rot, self.m.workspace_limits, self.m.engine, self.gripper)
+        return self.grasper.grasp( pos, rot, self.m.workspace_limits, self.m.engine, self.gripper, self.mover)
 
     def push(self, pos, rot):
-        self.grasper.move(pos, self.m.workspace_limits, self.m.engine)
-        return self.pusher.push(self.sim, self.m, self.gripper, self.mover, pos, rot, self.m.workspace_limits)
+        return self.pusher.push( pos, rot, self.m.workspace_limits, self.m.engine, self.gripper, self.mover)
+        #self.grasper.move(pos, self.m.workspace_limits, self.m.engine)
+        #return self.pusher.push(self.sim, self.m, self.gripper, self.mover, pos, rot, self.m.workspace_limits)
 
     # render
     def get_camera_data(self):

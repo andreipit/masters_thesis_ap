@@ -38,6 +38,7 @@
     <Compile Include="environment\modules\robot\move.py" />
     <Compile Include="environment\modules\robot\objects.py" />
     <Compile Include="environment\modules\robot\push.py" />
+    <Compile Include="environment\modules\robot\push_orig.py" />
     <Compile Include="environment\modules\robot\robot.py" />
     <Compile Include="environment\modules\robot\sim.py" />
     <Compile Include="environment\modules\robot\simulation\coppelia\vrep.py" />
