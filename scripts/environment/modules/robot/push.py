@@ -17,19 +17,21 @@ class RobotPush():
     def __init__(self):
         pass
     
-    def push(self, pos_new: NDArray["3,1", float], rot_new: float, limits: list, engine: Engine,  gripper: RobotGripper, mover: RobotMove) -> bool:
+    def push(self, pos: NDArray["3,1", float], degrees: float, limits: list, engine: Engine,  gripper: RobotGripper, mover: RobotMove) -> bool:
         gripper_full_closed = gripper.close_gripper(engine)
-        mover.rotate(rot_new, engine)
-        mover.move(pos_new, limits, engine)
+        mover.rotate(degrees, engine)
+        mover.move(pos, limits, engine)
 
-        pos_new[2] -= 0.15
-        mover.move(pos_new, limits, engine)
+        pos[2] -= 0.15
+        mover.move(pos, limits, engine)
+        
+        print('before',pos)
+        pos = self._get_push_end(pos, degrees)
+        print('after',pos)
+        mover.move(pos, limits, engine)
 
-        pos_new = self._get_push_end(pos_new)
-        mover.move(pos_new, limits, engine)
-
-        pos_new[2] += 0.15
-        mover.move(pos_new, limits, engine)
+        pos[2] += 0.15
+        mover.move(pos, limits, engine)
 
         success = True
         return success
@@ -38,13 +40,25 @@ class RobotPush():
         #grasp_success = not gripper_full_closed
         #return grasp_success
 
-    def _get_push_end(self, pos: NDArray["3,1", float]) -> NDArray["3,1", float]:
+    def _get_push_end(self, start: NDArray["3,1", float], degrees_start: float) -> NDArray["3,1", float]:
 
-        pos[1] += 0.3
-        return pos
+        #pos[1] += 0.3
+        #return pos
+
+        push_length = 0.13
+
+        x = start[0] + push_length * np.cos(degrees_start)
+        y = start[1] + push_length * np.sin(degrees_start)
+        z = start[2] # same height
+        return np.asarray([x, y, z])
 
         #push_orientation = [1.0,0.0]
+        #x = push_orientation[0]*np.cos(heightmap_rotation_angle)
+
+
         #push_direction = np.asarray([push_orientation[0]*np.cos(heightmap_rotation_angle) - push_orientation[1]*np.sin(heightmap_rotation_angle), push_orientation[0]*np.sin(heightmap_rotation_angle) + push_orientation[1]*np.cos(heightmap_rotation_angle)])
+
+
 
         ## Move gripper to location above pushing point
         #pushing_point_margin = 0.1

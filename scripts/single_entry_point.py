@@ -26,7 +26,7 @@ if __name__ == '__main__':
             s, r, done, info = env.step(a_g)
             env.total_r += r
         elif x == 'p':
-            a_p = np.asarray([0.0, -0.5, -0.2, 0.25, 0]) # center of desk on height 0.2 grasp at (.5, .5, .5)
+            a_p = np.asarray([0.0, -0.5, -0.2, 0.25, 90]) # center of desk on height 0.2 grasp at (.5, .5, .5)
             s, r, done, info = env.step(a_p)
 
 

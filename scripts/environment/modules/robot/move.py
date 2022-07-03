@@ -15,12 +15,12 @@ class RobotMove():
 
     def rotate(self,  degrees_new: float, engine: Engine):
         """ angle_new is in degrees between -90 and 90 """
-        degrees_new = self._convert_rot(degrees_new) # trim and to radians
+        radians_new = self._convert_rot(degrees_new) # trim and to radians
         _, dummy_id = engine.gameobject_find('UR5_target')
         _, rot_old = engine.global_rotation_get(_ObjID = dummy_id) # radians!!!
-        delay = int(abs(rot_old[1] - degrees_new) * 10) # or 20; more difference -> more time we need
+        delay = int(abs(rot_old[1] - radians_new) * 10) # or 20; more difference -> more time we need
         for i in range(1, delay + 1):
-            angle_next = self.lerp_f(rot_old[1], degrees_new, i / delay)
+            angle_next = self._lerp_f(rot_old[1], radians_new, i / delay)
             engine.global_rotation_set(_ObjID = dummy_id, _NewRot3D = (np.pi / 2, angle_next, np.pi / 2))
         _, rot_old = engine.global_rotation_get(_ObjID = dummy_id) # radians!!!
 
@@ -30,17 +30,17 @@ class RobotMove():
         _, pos_old = engine.global_position_get(_ObjID = dummy_id) #print('pos_old', pos_old, ' \n pos_new', pos_new)
         delay = int(np.linalg.norm(np.asarray(pos_old) - np.asarray(pos_new)) * 50)
         for i in range(1, delay + 1):
-            pos_next = self.lerp_vec(pos_old, pos_new, i / delay) #print('pos_next', pos_next)
+            pos_next = self._lerp_vec(pos_old, pos_new, i / delay) #print('pos_next', pos_next)
             engine.global_position_set(_ObjID = dummy_id, _NewPos3D = pos_next)
 
             
-    def lerp_f(self, start:float, stop:float, i:float) -> list:
+    def _lerp_f(self, start:float, stop:float, i:float) -> list:
         """ 20 30 0.3 => 20 + (30-20)*0.3 = 23 
             30 20 0.3 => 30 + (20-30)*0.3 = 30-3 
         """
         return start + (stop - start) * i
 
-    def lerp_vec(self, start:list, stop:list, i:float) -> list:
+    def _lerp_vec(self, start:list, stop:list, i:float) -> list:
         x = start[0] + (stop[0] - start[0]) * i
         y = start[1] + (stop[1] - start[1]) * i
         z = start[2] + (stop[2] - start[2]) * i
