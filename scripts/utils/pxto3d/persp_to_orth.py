@@ -8,7 +8,7 @@ from utils.custom_types import NDArray
 from environment.envs.env_01 import Env01
 
 
-class Pxto3d():
+class PerspToOrth():
 
     def __init__(self):
         pass
@@ -27,9 +27,8 @@ class Pxto3d():
             workspace_limits,
             heightmap_resolution)
 
-        plt.imshow(color_heightmap); plt.show(block=True)
-        #plt.imshow(depth_heightmap); plt.show(block=True)
 
+        return color_heightmap, depth_heightmap
         pass
 
     
@@ -203,7 +202,7 @@ if __name__ == '__main__':
     done = False
 
     engine = Engine()
-    converter = Pxto3d()
+    converter = PerspToOrth()
 
     # perst images
     color_img, depth_img = converter.get_camera_data(engine)
@@ -215,6 +214,6 @@ if __name__ == '__main__':
     # converted to ortho
     cam_pose = converter.create_perspcamera_trans_matrix4x4(engine) #env.r.sim.create_perspcamera_trans_matrix4x4(env.r.m)
 
-    converter.convert_px_to_3d(color_img, depth_img, cam_pose, engine)
+    color_heightmap, depth_heightmap = converter.convert_px_to_3d(color_img, depth_img, cam_pose, engine)
 
 

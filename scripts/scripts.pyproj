@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>36743adb-75ca-488c-9295-8a8a8d0e01bd</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>utils\pxto3d\pxto3d.py</StartupFile>
+    <StartupFile>utils\pxto3d\persp_to_orth.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -65,7 +65,8 @@
     <Compile Include="single_entry_point.py" />
     <Compile Include="test\test_server.py" />
     <Compile Include="test\test_gym_registration.py" />
-    <Compile Include="utils\pxto3d\pxto3d.py" />
+    <Compile Include="utils\pxto3d\orth_to_3d.py" />
+    <Compile Include="utils\pxto3d\persp_to_orth.py" />
     <Compile Include="utils\utils.py" />
   </ItemGroup>
   <ItemGroup>
