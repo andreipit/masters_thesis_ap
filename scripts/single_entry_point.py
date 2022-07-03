@@ -7,10 +7,13 @@ if __name__ == '__main__':
     state = env.reset()
     env.render()
     done = False
-    a_g = [1.0, -0.6, -0.3, 0.1, 120] # center of desk on height 0.2 grasp at (.5, .5, .5)
-    a_g2 = [1.0, -0.2, 0.3, 0.1, 120] # center of desk on height 0.2 grasp at (.5, .5, .5)
-    a_p = [0.0, -0.6, 0, 0.1, 120] # center of desk on height 0.2 grasp at (.5, .5, .5)
-    once = True
+    #a_g = [1.0, -0.6, -0.3, 0.1, 120] # center of desk on height 0.2 grasp at (.5, .5, .5)
+    #a_g = np.asarray([1.0, -0.6, -0.3, 0.1, 120]) # center of desk on height 0.2 grasp at (.5, .5, .5)
+    a_g = np.asarray([1.0, -0.5, 0, 0.25, 0]) # center of desk on height 0.2 grasp at (.5, .5, .5)
+    #a_g2 = [1.0, -0.2, 0.3, 0.1, 120] # center of desk on height 0.2 grasp at (.5, .5, .5)
+    #a_g2 = np.asarray([1.0, -0.2, 0.3, 0.1, 120]) # center of desk on height 0.2 grasp at (.5, .5, .5)
+    a_p = np.asarray([0.0, -0.6, 0, 0.1, 120]) # center of desk on height 0.2 grasp at (.5, .5, .5)
+    #once = True
     #s, r, done, info = env.step(a_g)
     while not done:
         time.sleep(0.1)
@@ -26,16 +29,17 @@ if __name__ == '__main__':
         elif x == 'ren':
             env.render()
         elif x == 'g':
-            y = input()
-            a_g[4] = float(y)
-            a_g2[4] = float(y)
+            #y = input()
+            #a_g[4] = float(y)
+            #a_g2[4] = float(y)
+            s, r, done, info = env.step(a_g)
 
-            if once:
-                s, r, done, info = env.step(a_g)
-                once = False
-            else:
-                s, r, done, info = env.step(a_g2)
-                once = True
+            #if once:
+                #s, r, done, info = env.step(a_g)
+            #    once = False
+            #else:
+            #s, r, done, info = env.step(a_g2)
+                #once = True
         elif x == 'p':
             s, r, done, info = env.step(a_p)
 

@@ -11,6 +11,8 @@ from .gripper import RobotGripper
 from .camera import RobotCamera
 from .grasp import RobotGrasp
 
+from utils.custom_types import NDArray
+
 
 class Robot():
     debug: bool = False
@@ -58,13 +60,13 @@ class Robot():
     def get_obj_masks(self, obj_ind):
         return self.mask.get_obj_masks(self.sim, self.m);
 
-    # grasp/push
-    def grasp(self, pos, rot):
-        #return self.grasper.grasp(self.a, self.sim, self.m, self.cam, self.gripper, self.mover, self.obj, pos, rot, self.m.workspace_limits)
-        #return self.grasper.grasp(self.sim, self.m, self.cam, self.gripper, self.mover, self.obj, pos, rot, self.m.workspace_limits)
-        return self.grasper.grasp( pos, rot, self.m.workspace_limits, self.m.engine)
+    def grasp(self, pos: NDArray["3,1", float], rot: float):
+        #self.grasper.move(pos, self.m.workspace_limits, self.m.engine)
+        #self.grasper.rotate(rot, self.m.engine)
+        return self.grasper.grasp( pos, rot, self.m.workspace_limits, self.m.engine, self.gripper)
 
     def push(self, pos, rot):
+        self.grasper.move(pos, self.m.workspace_limits, self.m.engine)
         return self.pusher.push(self.sim, self.m, self.gripper, self.mover, pos, rot, self.m.workspace_limits)
 
     # render

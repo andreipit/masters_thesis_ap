@@ -17,9 +17,18 @@ class RobotGrasp():
     def __init__(self):
         pass
     
-    def grasp(self, pos_new, rot_new, limits, engine: Engine):
+    def grasp(self, pos_new: NDArray["3,1", float], rot_new: float, limits: list, engine: Engine,  gripper: RobotGripper):
+        gripper.open_gripper(engine)
         self.rotate(rot_new, engine)
         self.move(pos_new, limits, engine)
+        _, dummy_id = engine.gameobject_find('UR5_target')
+        _, pos_old = engine.global_position_get(_ObjID = dummy_id) #print('pos_old', pos_old, ' \n pos_new', pos_new)
+        pos_old[2] -= 0.15
+        self.move(pos_old, limits, engine)
+        gripper_full_closed = gripper.close_gripper(engine)
+        pos_old[2] += 0.15
+        self.move(pos_old, limits, engine)
+
 
     def rotate(self,  angle_new: float, engine: Engine):
         """ angle_new is in degrees between -90 and 90 """
@@ -32,8 +41,9 @@ class RobotGrasp():
             engine.global_rotation_set(_ObjID = dummy_id, _NewRot3D = (np.pi / 2, angle_next, np.pi / 2))
         _, rot_old = engine.global_rotation_get(_ObjID = dummy_id) # radians!!!
 
-    def move(self, pos_new, limits, engine: Engine):
-        pos_new = self._convert_pos(pos_new, limits)
+    def move(self, pos_new: NDArray["3,1", float], limits: list, engine: Engine):
+        #pos_new = self._convert_pos(pos_new, limits)
+        print(pos_new)
         _, dummy_id = engine.gameobject_find('UR5_target')
         _, pos_old = engine.global_position_get(_ObjID = dummy_id) #print('pos_old', pos_old, ' \n pos_new', pos_new)
         delay = int(np.linalg.norm(np.asarray(pos_old) - np.asarray(pos_new)) * 50)
@@ -41,7 +51,7 @@ class RobotGrasp():
             pos_next = self.lerp_vec(pos_old, pos_new, i / delay) #print('pos_next', pos_next)
             engine.global_position_set(_ObjID = dummy_id, _NewPos3D = pos_next)
 
-    def _convert_pos(self, pos, limits):
+    def _convert_pos(self, pos: NDArray["3,1", float], limits: list) -> NDArray["3,1", float]:
         res = np.asarray(pos).copy()
         res[2] = max(res[2] - 0.04, limits[2][0] + 0.02) # higher table or -= 0.04
         res = (res[0], res[1], res[2] +  0.15) # just += 0.15

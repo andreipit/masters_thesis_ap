@@ -15,4 +15,5 @@ from environment.modules.model import EnvModel
 from utils.network.server_coppelia import Server
 
 from environment.modules.robot.robot import Robot
+from utils.custom_types import NDArray
 

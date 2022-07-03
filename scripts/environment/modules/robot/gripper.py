@@ -14,20 +14,20 @@ class RobotGripper():
         pass
 
     
-    def close_gripper(self, sim: RobotSim, m: RobotModel, asynch=False):
+    def close_gripper(self, engine:Engine, asynch=False):
 
         gripper_motor_velocity = -0.5
         gripper_motor_force = 100
 
-        sim_ret, RG2_gripper_handle = m.engine.gameobject_find(_Name = 'RG2_openCloseJoint')
-        sim_ret, gripper_joint_position = m.engine.global_position_get_joint(_ObjID = RG2_gripper_handle)
+        sim_ret, RG2_gripper_handle = engine.gameobject_find(_Name = 'RG2_openCloseJoint')
+        sim_ret, gripper_joint_position = engine.global_position_get_joint(_ObjID = RG2_gripper_handle)
 
-        m.engine.joint_force_set(_ObjID = RG2_gripper_handle, _Value = gripper_motor_force)
-        m.engine.joint_target_velocity_set(_ObjID = RG2_gripper_handle, _Value = gripper_motor_velocity)
+        engine.joint_force_set(_ObjID = RG2_gripper_handle, _Value = gripper_motor_force)
+        engine.joint_target_velocity_set(_ObjID = RG2_gripper_handle, _Value = gripper_motor_velocity)
         
         gripper_fully_closed = False
         while gripper_joint_position > -0.045: # Block until gripper is fully closed
-            sim_ret, new_gripper_joint_position = m.engine.global_position_get_joint(_ObjID = RG2_gripper_handle)
+            sim_ret, new_gripper_joint_position = engine.global_position_get_joint(_ObjID = RG2_gripper_handle)
             #sim_ret, new_gripper_joint_position = vrep.simxGetJointPosition(self.sim_client, RG2_gripper_handle, vrep.simx_opmode_blocking)
             # print(gripper_joint_position)
             if new_gripper_joint_position >= gripper_joint_position:
@@ -38,18 +38,12 @@ class RobotGripper():
         return gripper_fully_closed
 
 
-    def open_gripper(self, sim: RobotSim, m:RobotModel, asynch=False):
-
+    def open_gripper(self, engine:Engine, asynch=False):
         gripper_motor_velocity = 0.5
         gripper_motor_force = 20
-        sim_ret, RG2_gripper_handle = m.engine.gameobject_find('RG2_openCloseJoint')
-        #sim_ret, RG2_gripper_handle = vrep.simxGetObjectHandle(self.sim_client, 'RG2_openCloseJoint', vrep.simx_opmode_blocking)
-        sim_ret, gripper_joint_position = m.engine.global_position_get_joint(_ObjID = RG2_gripper_handle)
-        #sim_ret, gripper_joint_position = vrep.simxGetJointPosition(self.sim_client, RG2_gripper_handle, vrep.simx_opmode_blocking)
-        m.engine.joint_force_set(_ObjID = RG2_gripper_handle, _Value = gripper_motor_force)
-        #vrep.simxSetJointForce(self.sim_client, RG2_gripper_handle, gripper_motor_force, vrep.simx_opmode_blocking)
-        m.engine.joint_target_velocity_set(_ObjID = RG2_gripper_handle, _Value = gripper_motor_velocity)
-        #vrep.simxSetJointTargetVelocity(self.sim_client, RG2_gripper_handle, gripper_motor_velocity, vrep.simx_opmode_blocking)
+        sim_ret, RG2_gripper_handle = engine.gameobject_find('RG2_openCloseJoint')
+        sim_ret, gripper_joint_position = engine.global_position_get_joint(_ObjID = RG2_gripper_handle)
+        engine.joint_force_set(_ObjID = RG2_gripper_handle, _Value = gripper_motor_force)
+        engine.joint_target_velocity_set(_ObjID = RG2_gripper_handle, _Value = gripper_motor_velocity)
         while gripper_joint_position < 0.03: # Block until gripper is fully open
-            sim_ret, gripper_joint_position = m.engine.global_position_get_joint(_ObjID = RG2_gripper_handle)    
-            #sim_ret, gripper_joint_position = vrep.simxGetJointPosition(self.sim_client, RG2_gripper_handle, vrep.simx_opmode_blocking)
+            sim_ret, gripper_joint_position = engine.global_position_get_joint(_ObjID = RG2_gripper_handle)    

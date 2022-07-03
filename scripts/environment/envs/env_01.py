@@ -20,14 +20,14 @@ class Env01(Env):
         self.round = -1
         print('Env is initted')
     
-    def step(self, a):
+    def step(self, a: NDArray["5,1", float]):
         r = 0
         done = False
         info = {}
 
         a_type: str = 'push' if (a[0] == 0.0) else 'grasp'
-        a_coord: list = [a[1], a[2], a[3]]
-        a_angle: list = a[4]
+        a_coord: NDArray["3,1", float] = np.asarray([a[1], a[2], a[3]])
+        a_angle: float = a[4]
 
         if a_type == 'grasp':
             self.r.grasp(pos = a_coord, rot = a_angle)
