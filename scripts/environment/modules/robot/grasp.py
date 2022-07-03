@@ -17,18 +17,18 @@ class RobotGrasp():
     def __init__(self):
         pass
     
-    def grasp(self, pos_new: NDArray["3,1", float], rot_new: float, limits: list, engine: Engine,  gripper: RobotGripper):
+    def grasp(self, pos_new: NDArray["3,1", float], rot_new: float, limits: list, engine: Engine,  gripper: RobotGripper) -> bool:
         gripper.open_gripper(engine)
         self.rotate(rot_new, engine)
         self.move(pos_new, limits, engine)
-        _, dummy_id = engine.gameobject_find('UR5_target')
-        _, pos_old = engine.global_position_get(_ObjID = dummy_id) #print('pos_old', pos_old, ' \n pos_new', pos_new)
-        pos_old[2] -= 0.15
-        self.move(pos_old, limits, engine)
+        #_, pos_old = engine.global_position_get(_ObjName = 'UR5_target') #print('pos_old', pos_old, ' \n pos_new', pos_new)
+        pos_new[2] -= 0.15
+        self.move(pos_new, limits, engine)
         gripper_full_closed = gripper.close_gripper(engine)
-        pos_old[2] += 0.15
-        self.move(pos_old, limits, engine)
-
+        pos_new[2] += 0.15
+        self.move(pos_new, limits, engine)
+        grasp_success = not gripper_full_closed
+        return grasp_success
 
     def rotate(self,  angle_new: float, engine: Engine):
         """ angle_new is in degrees between -90 and 90 """

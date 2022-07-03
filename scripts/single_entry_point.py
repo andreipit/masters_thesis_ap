@@ -33,7 +33,7 @@ if __name__ == '__main__':
             #a_g[4] = float(y)
             #a_g2[4] = float(y)
             s, r, done, info = env.step(a_g)
-
+            env.total_r += r
             #if once:
                 #s, r, done, info = env.step(a_g)
             #    once = False

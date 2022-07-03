@@ -30,14 +30,16 @@ class Env01(Env):
         a_angle: float = a[4]
 
         if a_type == 'grasp':
-            self.r.grasp(pos = a_coord, rot = a_angle)
+            grasp_success = self.r.grasp(pos = a_coord, rot = a_angle)
+            print('grasp_success',grasp_success)
+            r = (r+1) if grasp_success else (r-1)
         elif a_type == 'push':
-            self.r.push(pos = a_coord, rot = a_angle)
+            push_success = self.r.push(pos = a_coord, rot = a_angle)
 
         bg_color_img, bg_depth_img = self.r.get_photo()
         self.state = bg_color_img
-        r += 1
-        done = (r > 2)
+
+        done = (r > 5)
 
         self.round += 1
         return self.state, r, done, info
