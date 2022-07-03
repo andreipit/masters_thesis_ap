@@ -37,49 +37,49 @@ class RobotSim():
         m.engine.sleep(1)
         m.RG2_tip_handle = m.engine.restart_hard('UR5_tip')
 
-    def create_perspcamera_trans_matrix4x4(self, m:RobotModel) -> NDArray["4,4", float]:
-        # 0) find persp camera in scene
-        sim_ret, m.cam_handle = m.engine.gameobject_find('Vision_sensor_persp')
+    #def create_perspcamera_trans_matrix4x4(self, m:RobotModel) -> NDArray["4,4", float]:
+    #    # 0) find persp camera in scene
+    #    sim_ret, m.cam_handle = m.engine.gameobject_find('Vision_sensor_persp')
 
-        # 1) get pos/rot
-        sim_ret, cam_position = m.engine.global_position_get(_ObjID = m.cam_handle)
-        sim_ret, cam_orientation = m.engine.global_rotation_get(_ObjID = m.cam_handle)
-        # => cam_position [-1.0, 0.0, 0.5] 
-        # => cam_orientation [3.141592025756836, 0.7853984832763672, 1.5707961320877075]
+    #    # 1) get pos/rot
+    #    sim_ret, cam_position = m.engine.global_position_get(_ObjID = m.cam_handle)
+    #    sim_ret, cam_orientation = m.engine.global_rotation_get(_ObjID = m.cam_handle)
+    #    # => cam_position [-1.0, 0.0, 0.5] 
+    #    # => cam_orientation [3.141592025756836, 0.7853984832763672, 1.5707961320877075]
 
-        # 2) Create matrices and fill them
-        cam_trans = np.eye(4,4) # 4x4, all zeros, only diagonal items == 1
-        """
-        [[1. 0. 0. 0.]
-         [0. 1. 0. 0.]
-         [0. 0. 1. 0.]
-         [0. 0. 0. 1.]]
-        """
-        cam_trans[0:3,3] = np.asarray(cam_position) # put [-1.0, 0.0, 0.5] to last column
-        """
-        [[ 1.   0.   0.  -1. ]
-         [ 0.   1.   0.   0. ]
-         [ 0.   0.   1.   0.5]
-         [ 0.   0.   0.   1. ]]
-        """
-        cam_orientation = [-cam_orientation[0], -cam_orientation[1], -cam_orientation[2]] 
-        # => [-3.141592025756836, -0.7853984832763672, -1.5707961320877075] # just 3 minuses
-        cam_rotm = np.eye(4,4) # 4x4, all zeros, only diagonal items == 1
-        cam_rotm[0:3,0:3] = np.linalg.inv(utils.euler2rotm(cam_orientation))
-        """
-        looks like rot matrix. If we mult each sensor vertex on it -> will get euler angles.
-        [[ 1.37678730e-07 -7.07106555e-01  7.07107007e-01  0.00000000e+00]
-         [-1.00000000e+00 -6.38652273e-07 -4.43944800e-07  0.00000000e+00]
-         [ 7.65511775e-07 -7.07107007e-01 -7.07106555e-01  0.00000000e+00]
-         [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  1.00000000e+00]]
-        """
+    #    # 2) Create matrices and fill them
+    #    cam_trans = np.eye(4,4) # 4x4, all zeros, only diagonal items == 1
+    #    """
+    #    [[1. 0. 0. 0.]
+    #     [0. 1. 0. 0.]
+    #     [0. 0. 1. 0.]
+    #     [0. 0. 0. 1.]]
+    #    """
+    #    cam_trans[0:3,3] = np.asarray(cam_position) # put [-1.0, 0.0, 0.5] to last column
+    #    """
+    #    [[ 1.   0.   0.  -1. ]
+    #     [ 0.   1.   0.   0. ]
+    #     [ 0.   0.   1.   0.5]
+    #     [ 0.   0.   0.   1. ]]
+    #    """
+    #    cam_orientation = [-cam_orientation[0], -cam_orientation[1], -cam_orientation[2]] 
+    #    # => [-3.141592025756836, -0.7853984832763672, -1.5707961320877075] # just 3 minuses
+    #    cam_rotm = np.eye(4,4) # 4x4, all zeros, only diagonal items == 1
+    #    cam_rotm[0:3,0:3] = np.linalg.inv(utils.euler2rotm(cam_orientation))
+    #    """
+    #    looks like rot matrix. If we mult each sensor vertex on it -> will get euler angles.
+    #    [[ 1.37678730e-07 -7.07106555e-01  7.07107007e-01  0.00000000e+00]
+    #     [-1.00000000e+00 -6.38652273e-07 -4.43944800e-07  0.00000000e+00]
+    #     [ 7.65511775e-07 -7.07107007e-01 -7.07106555e-01  0.00000000e+00]
+    #     [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  1.00000000e+00]]
+    #    """
 
-        # 3) Save result to variable
-        # combine pos and rot matrices into one. Matrix x Matrix x Vec = Matrix x Vec
-        # cam_pose x Dummy = Dummy with same pos and rot, as Vision_sensor_persp
-        #m.cam_pose = np.dot(cam_trans, cam_rotm) # Compute rigid transformation representating camera pose
-        cam_pose = np.dot(cam_trans, cam_rotm) # Compute rigid transformation representating camera pose
-        return cam_pose
+    #    # 3) Save result to variable
+    #    # combine pos and rot matrices into one. Matrix x Matrix x Vec = Matrix x Vec
+    #    # cam_pose x Dummy = Dummy with same pos and rot, as Vision_sensor_persp
+    #    #m.cam_pose = np.dot(cam_trans, cam_rotm) # Compute rigid transformation representating camera pose
+    #    cam_pose = np.dot(cam_trans, cam_rotm) # Compute rigid transformation representating camera pose
+    #    return cam_pose
 
     def get_2_perspcamera_photos_480x640(self, engine: Engine, cam_depth_scale: float) -> (NDArray["480,640,3", np.uint8], NDArray["480,640", float]):
         """
