@@ -10,6 +10,7 @@ from .move import RobotMove
 from .gripper import RobotGripper
 from .camera import RobotCamera
 from .grasp import RobotGrasp
+#from .px_to_3d import RobotPxTo3d
 
 from utils.custom_types import NDArray
 
@@ -20,6 +21,7 @@ class Robot():
     m: RobotModel = None
     sim: RobotSim = None
     obj: RobotObjects = None
+    #pxto3d: RobotPxTo3d = None
 
     def __init__(self):
         pass
@@ -35,6 +37,7 @@ class Robot():
         self.cam = RobotCamera()
         self.grasper = RobotGrasp()
         self.m.engine = Engine()
+        #self.pxto3d = RobotPxTo3d()
 
 
     def connect_and_restart(self):
@@ -47,6 +50,9 @@ class Robot():
 
     def get_photo(self):
         return self.sim.get_2_perspcamera_photos_480x640(self.m.engine, self.m.cam_depth_scale)
+
+    #def convert_px_to_3d(self, color_img, depth_img):
+    #    self.pxto3d.convert_px_to_3d(color_img, depth_img, self.m)
 
     # test mask    
     def get_test_obj_mask(self, obj_ind):

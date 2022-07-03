@@ -4,6 +4,7 @@ import random
 import numpy as np
 from typing import Optional, Tuple, Union, TypeVar
 ObsType = TypeVar("ObsType")
+from matplotlib import pyplot as plt
 
 from environment.modules.init import EnvInit
 from environment.modules.step import EnvStep

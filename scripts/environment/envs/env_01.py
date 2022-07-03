@@ -50,7 +50,7 @@ class Env01(Env):
         self.r = Robot()
         self.r.create_empty_helpers()
         self.r.connect_and_restart()
-        #self.r.add_objects(5)
+        self.r.add_objects(5)
 
         # 3 ways to get state:
         #self.state = np.zeros((480, 640, 3), dtype="float32") # random.randint(0, 10)
