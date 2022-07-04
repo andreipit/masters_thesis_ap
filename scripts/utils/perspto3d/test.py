@@ -39,10 +39,10 @@ if __name__ == '__main__':
     converter2 = OrthTo3d()
     # test seed
     alp = 4 * 22.5
-    top_l = (alp, 0, 0)
-    top_r = (alp, 223, 0)
-    bottom_r = (alp, 223, 223)
-    bottom_l = (alp, 0, 223)
+    top_l = (alp, 0, 0) # arm-eye-view (camera looks TO arm face)
+    top_r = (alp, 223, 0) # arm-eye-view (camera looks TO arm face)
+    bottom_r = (alp, 223, 223) # arm-eye-view (camera looks TO arm face)
+    bottom_l = (alp, 0, 223) # arm-eye-view (camera looks TO arm face)
     heightmap_resolution: float = 0.002
     for coor in [top_l, top_r, bottom_r, bottom_l]:
         pos3d = converter2.pixel_to_3d(coor[2], coor[1], depth_heightmap, heightmap_resolution, env.r.m.workspace_limits)
