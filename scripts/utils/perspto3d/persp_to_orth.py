@@ -56,8 +56,18 @@ class PerspToOrth():
             workspace_limits,
             heightmap_resolution)
 
+        # make same rotation as in persp image: rot90 + flip:
+        color_heightmap = np.rot90(color_heightmap, k=1, axes=(0,1))
+        color_heightmap = np.flip(color_heightmap, axis=1)
+        depth_heightmap = np.rot90(depth_heightmap, k=1, axes=(0,1))
+        depth_heightmap = np.flip(depth_heightmap, axis=1)
 
-        return color_heightmap, depth_heightmap
+        # set missing heights == 0
+        valid_depth_heightmap = depth_heightmap.copy()
+        valid_depth_heightmap[np.isnan(valid_depth_heightmap)] = 0
+
+
+        return color_heightmap, valid_depth_heightmap
         pass
 
     def create_perspcamera_trans_matrix4x4(self, engine: Engine) -> NDArray["4,4", float]:
