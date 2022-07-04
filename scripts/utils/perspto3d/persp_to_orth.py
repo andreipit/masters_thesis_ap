@@ -2,6 +2,8 @@ import time
 import numpy as np
 from matplotlib import pyplot as plt
 import math
+#from typing import Optional, Tuple, Union, TypeVar
+from typing import Tuple
 
 from environment.modules.robot.simulation.engine import Engine
 from utils.custom_types import NDArray
@@ -12,14 +14,41 @@ class PerspToOrth():
 
     def __init__(self):
         pass
-    
-    def convert_px_to_3d(self, color_img, depth_img, cam_pose, engine: Engine):
+
+    def get_camera_data(self, engine: Engine) -> Tuple[NDArray["480,640,3", float], NDArray["480,640", float]]:
+        """ Just persp images """
+        # Get color image from simulation
+        #sim_ret, resolution, raw_image = vrep.simxGetVisionSensorImage(self.sim_client, self.cam_handle, 0, vrep.simx_opmode_blocking)
+        sim_ret, cam_handle = engine.gameobject_find('Vision_sensor_persp')
+        sim_ret, resolution, raw_image = engine.camera_image_rgb_get(cam_handle)
+        
+        color_img = np.asarray(raw_image)
+        color_img.shape = (resolution[1], resolution[0], 3)
+        color_img = color_img.astype(float)/255
+        color_img[color_img < 0] += 1
+        color_img *= 255
+        color_img = np.fliplr(color_img)
+        color_img = color_img.astype(np.uint8)
+
+        # Get depth image from simulation
+        #sim_ret, resolution, depth_buffer = vrep.simxGetVisionSensorDepthBuffer(self.sim_client, self.cam_handle, vrep.simx_opmode_blocking)
+        sim_ret, resolution, depth_buffer = engine.camera_image_depth_get(cam_handle)
+        depth_img = np.asarray(depth_buffer)
+        depth_img.shape = (resolution[1], resolution[0])
+        depth_img = np.fliplr(depth_img)
+        zNear = 0.01
+        zFar = 10
+        depth_img = depth_img * (zFar - zNear) + zNear
+
+        return color_img, depth_img
+
+    def convert_persp_to_gravity_orth(self, color_img, depth_img, cam_pose, engine: Engine) -> Tuple[NDArray["224,224,3", float], NDArray["224,224", float]]:
 
         cam_intrinsics = np.asarray([[618.62, 0, 320], [0, 618.62, 240], [0, 0, 1]])
         workspace_limits: list = [[ -0.724, -0.276 ], [ -0.224, 0.224 ], [ -0.0001, 0.4 ]] # 3 axis: xmax-xmin; ymax-ymin, zmax-zmin
         heightmap_resolution: float = 0.002
 
-        color_heightmap, depth_heightmap = self.get_heightmap(
+        color_heightmap, depth_heightmap = self._get_heightmap(
             color_img, 
             depth_img, 
             cam_intrinsics, 
@@ -31,8 +60,51 @@ class PerspToOrth():
         return color_heightmap, depth_heightmap
         pass
 
-    
-    def get_pointcloud(self, color_img, depth_img, camera_intrinsics):
+    def create_perspcamera_trans_matrix4x4(self, engine: Engine) -> NDArray["4,4", float]:
+        # 0) find persp camera in scene
+        sim_ret, cam_handle = engine.gameobject_find('Vision_sensor_persp')
+
+        # 1) get pos/rot
+        sim_ret, cam_position = engine.global_position_get(_ObjID = cam_handle)
+        sim_ret, cam_orientation = engine.global_rotation_get(_ObjID = cam_handle)
+        # => cam_position [-1.0, 0.0, 0.5] 
+        # => cam_orientation [3.141592025756836, 0.7853984832763672, 1.5707961320877075]
+
+        # 2) Create matrices and fill them
+        cam_trans = np.eye(4,4) # 4x4, all zeros, only diagonal items == 1
+        """
+        [[1. 0. 0. 0.]
+         [0. 1. 0. 0.]
+         [0. 0. 1. 0.]
+         [0. 0. 0. 1.]]
+        """
+        cam_trans[0:3,3] = np.asarray(cam_position) # put [-1.0, 0.0, 0.5] to last column
+        """
+        [[ 1.   0.   0.  -1. ]
+         [ 0.   1.   0.   0. ]
+         [ 0.   0.   1.   0.5]
+         [ 0.   0.   0.   1. ]]
+        """
+        cam_orientation = [-cam_orientation[0], -cam_orientation[1], -cam_orientation[2]] 
+        # => [-3.141592025756836, -0.7853984832763672, -1.5707961320877075] # just 3 minuses
+        cam_rotm = np.eye(4,4) # 4x4, all zeros, only diagonal items == 1
+        cam_rotm[0:3,0:3] = np.linalg.inv(self._euler2rotm(cam_orientation))
+        """
+        looks like rot matrix. If we mult each sensor vertex on it -> will get euler angles.
+        [[ 1.37678730e-07 -7.07106555e-01  7.07107007e-01  0.00000000e+00]
+         [-1.00000000e+00 -6.38652273e-07 -4.43944800e-07  0.00000000e+00]
+         [ 7.65511775e-07 -7.07107007e-01 -7.07106555e-01  0.00000000e+00]
+         [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  1.00000000e+00]]
+        """
+
+        # 3) Save result to variable
+        # combine pos and rot matrices into one. Matrix x Matrix x Vec = Matrix x Vec
+        # cam_pose x Dummy = Dummy with same pos and rot, as Vision_sensor_persp
+        #m.cam_pose = np.dot(cam_trans, cam_rotm) # Compute rigid transformation representating camera pose
+        cam_pose = np.dot(cam_trans, cam_rotm) # Compute rigid transformation representating camera pose
+        return cam_pose
+
+    def _get_pointcloud(self, color_img, depth_img, camera_intrinsics):
 
         # Get depth image size
         im_h = depth_img.shape[0]
@@ -60,8 +132,7 @@ class PerspToOrth():
 
         return cam_pts, rgb_pts
 
-
-    def get_heightmap(self, color_img, depth_img, cam_intrinsics, cam_pose, workspace_limits, heightmap_resolution):
+    def _get_heightmap(self, color_img, depth_img, cam_intrinsics, cam_pose, workspace_limits, heightmap_resolution):
 
         # Compute heightmap size
         #print('---utils, workspace_limits=',workspace_limits, ' heightmap_resolution=', heightmap_resolution)
@@ -69,7 +140,7 @@ class PerspToOrth():
         #print('---utils, heightmap_size=',heightmap_size)
 
         # Get 3D point cloud from RGB-D images
-        surface_pts, color_pts = self.get_pointcloud(color_img, depth_img, cam_intrinsics)
+        surface_pts, color_pts = self._get_pointcloud(color_img, depth_img, cam_intrinsics)
 
         # Transform 3D point cloud from camera coordinates to robot coordinates
         surface_pts = np.transpose(np.dot(cam_pose[0:3,0:3],np.transpose(surface_pts)) + np.tile(cam_pose[0:3,3:],(1,surface_pts.shape[0])))
@@ -102,82 +173,9 @@ class PerspToOrth():
         depth_heightmap[depth_heightmap == -z_bottom] = np.nan
 
         return color_heightmap, depth_heightmap
-
     
-    def get_camera_data(self, engine: Engine):
-
-        # Get color image from simulation
-        #sim_ret, resolution, raw_image = vrep.simxGetVisionSensorImage(self.sim_client, self.cam_handle, 0, vrep.simx_opmode_blocking)
-        sim_ret, cam_handle = engine.gameobject_find('Vision_sensor_persp')
-        sim_ret, resolution, raw_image = engine.camera_image_rgb_get(cam_handle)
-        
-        color_img = np.asarray(raw_image)
-        color_img.shape = (resolution[1], resolution[0], 3)
-        color_img = color_img.astype(float)/255
-        color_img[color_img < 0] += 1
-        color_img *= 255
-        color_img = np.fliplr(color_img)
-        color_img = color_img.astype(np.uint8)
-
-        # Get depth image from simulation
-        #sim_ret, resolution, depth_buffer = vrep.simxGetVisionSensorDepthBuffer(self.sim_client, self.cam_handle, vrep.simx_opmode_blocking)
-        sim_ret, resolution, depth_buffer = engine.camera_image_depth_get(cam_handle)
-        depth_img = np.asarray(depth_buffer)
-        depth_img.shape = (resolution[1], resolution[0])
-        depth_img = np.fliplr(depth_img)
-        zNear = 0.01
-        zFar = 10
-        depth_img = depth_img * (zFar - zNear) + zNear
-
-        return color_img, depth_img
-
-    
-    def create_perspcamera_trans_matrix4x4(self, engine: Engine) -> NDArray["4,4", float]:
-        # 0) find persp camera in scene
-        sim_ret, cam_handle = engine.gameobject_find('Vision_sensor_persp')
-
-        # 1) get pos/rot
-        sim_ret, cam_position = engine.global_position_get(_ObjID = cam_handle)
-        sim_ret, cam_orientation = engine.global_rotation_get(_ObjID = cam_handle)
-        # => cam_position [-1.0, 0.0, 0.5] 
-        # => cam_orientation [3.141592025756836, 0.7853984832763672, 1.5707961320877075]
-
-        # 2) Create matrices and fill them
-        cam_trans = np.eye(4,4) # 4x4, all zeros, only diagonal items == 1
-        """
-        [[1. 0. 0. 0.]
-         [0. 1. 0. 0.]
-         [0. 0. 1. 0.]
-         [0. 0. 0. 1.]]
-        """
-        cam_trans[0:3,3] = np.asarray(cam_position) # put [-1.0, 0.0, 0.5] to last column
-        """
-        [[ 1.   0.   0.  -1. ]
-         [ 0.   1.   0.   0. ]
-         [ 0.   0.   1.   0.5]
-         [ 0.   0.   0.   1. ]]
-        """
-        cam_orientation = [-cam_orientation[0], -cam_orientation[1], -cam_orientation[2]] 
-        # => [-3.141592025756836, -0.7853984832763672, -1.5707961320877075] # just 3 minuses
-        cam_rotm = np.eye(4,4) # 4x4, all zeros, only diagonal items == 1
-        cam_rotm[0:3,0:3] = np.linalg.inv(self.euler2rotm(cam_orientation))
-        """
-        looks like rot matrix. If we mult each sensor vertex on it -> will get euler angles.
-        [[ 1.37678730e-07 -7.07106555e-01  7.07107007e-01  0.00000000e+00]
-         [-1.00000000e+00 -6.38652273e-07 -4.43944800e-07  0.00000000e+00]
-         [ 7.65511775e-07 -7.07107007e-01 -7.07106555e-01  0.00000000e+00]
-         [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  1.00000000e+00]]
-        """
-
-        # 3) Save result to variable
-        # combine pos and rot matrices into one. Matrix x Matrix x Vec = Matrix x Vec
-        # cam_pose x Dummy = Dummy with same pos and rot, as Vision_sensor_persp
-        #m.cam_pose = np.dot(cam_trans, cam_rotm) # Compute rigid transformation representating camera pose
-        cam_pose = np.dot(cam_trans, cam_rotm) # Compute rigid transformation representating camera pose
-        return cam_pose
-
-    # Get rotation matrix from euler angles
-    def euler2rotm(self, theta):
+    def _euler2rotm(self, theta):
+        # Get rotation matrix from euler angles
         R_x = np.array([[1,         0,                  0                   ],
                         [0,         math.cos(theta[0]), -math.sin(theta[0]) ],
                         [0,         math.sin(theta[0]), math.cos(theta[0])  ]
@@ -193,27 +191,4 @@ class PerspToOrth():
         R = np.dot(R_z, np.dot( R_y, R_x ))
         # R = np.dot(R_x, np.dot( R_y, R_z ))
         return R
-
-
-if __name__ == '__main__':
-    env = Env01() #env = gym.make('environment:env-v1') # Env01()
-    state = env.reset()
-    env.render()
-    done = False
-
-    engine = Engine()
-    converter = PerspToOrth()
-
-    # perst images
-    color_img, depth_img = converter.get_camera_data(engine)
-    cam_depth_scale: float = 1
-    depth_img = depth_img * cam_depth_scale # env.r.m.cam_depth_scale # Apply depth scale from calibration
-    plt.imshow(color_img); plt.show(block=True)
-    #plt.imshow(depth_img); plt.show(block=True)
-
-    # converted to ortho
-    cam_pose = converter.create_perspcamera_trans_matrix4x4(engine) #env.r.sim.create_perspcamera_trans_matrix4x4(env.r.m)
-
-    color_heightmap, depth_heightmap = converter.convert_px_to_3d(color_img, depth_img, cam_pose, engine)
-
 

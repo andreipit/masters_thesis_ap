@@ -4,14 +4,14 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>36743adb-75ca-488c-9295-8a8a8d0e01bd</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>utils\pxto3d\persp_to_orth.py</StartupFile>
+    <StartupFile>utils\perspto3d\test.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>scripts</Name>
     <RootNamespace>scripts</RootNamespace>
-    <InterpreterId>Global|VisualStudio|eff_env38</InterpreterId>
+    <InterpreterId>CondaEnv|CondaEnv|eff_env38</InterpreterId>
     <SuppressConfigureTestFrameworkPrompt>true</SuppressConfigureTestFrameworkPrompt>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -65,8 +65,9 @@
     <Compile Include="single_entry_point.py" />
     <Compile Include="test\test_server.py" />
     <Compile Include="test\test_gym_registration.py" />
-    <Compile Include="utils\pxto3d\orth_to_3d.py" />
-    <Compile Include="utils\pxto3d\persp_to_orth.py" />
+    <Compile Include="utils\perspto3d\orth_to_3d.py" />
+    <Compile Include="utils\perspto3d\persp_to_orth.py" />
+    <Compile Include="utils\perspto3d\test.py" />
     <Compile Include="utils\utils.py" />
   </ItemGroup>
   <ItemGroup>
@@ -94,7 +95,7 @@
     <Folder Include="utils\config\" />
     <Folder Include="utils\network\" />
     <Folder Include="utils\imports\" />
-    <Folder Include="utils\pxto3d\" />
+    <Folder Include="utils\perspto3d\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="environment\envs\__pycache__\basic_env.cpython-38.pyc" />
