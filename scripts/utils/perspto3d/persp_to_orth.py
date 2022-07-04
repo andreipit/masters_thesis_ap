@@ -7,7 +7,6 @@ from typing import Tuple
 
 from environment.modules.robot.simulation.engine import Engine
 from utils.custom_types import NDArray
-from environment.envs.env_01 import Env01
 
 
 class PerspToOrth():
@@ -15,35 +14,8 @@ class PerspToOrth():
     def __init__(self):
         pass
 
-    def get_camera_data(self, engine: Engine) -> Tuple[NDArray["480,640,3", float], NDArray["480,640", float]]:
-        """ Just persp images """
-        # Get color image from simulation
-        #sim_ret, resolution, raw_image = vrep.simxGetVisionSensorImage(self.sim_client, self.cam_handle, 0, vrep.simx_opmode_blocking)
-        sim_ret, cam_handle = engine.gameobject_find('Vision_sensor_persp')
-        sim_ret, resolution, raw_image = engine.camera_image_rgb_get(cam_handle)
-        
-        color_img = np.asarray(raw_image)
-        color_img.shape = (resolution[1], resolution[0], 3)
-        color_img = color_img.astype(float)/255
-        color_img[color_img < 0] += 1
-        color_img *= 255
-        color_img = np.fliplr(color_img)
-        color_img = color_img.astype(np.uint8)
-
-        # Get depth image from simulation
-        #sim_ret, resolution, depth_buffer = vrep.simxGetVisionSensorDepthBuffer(self.sim_client, self.cam_handle, vrep.simx_opmode_blocking)
-        sim_ret, resolution, depth_buffer = engine.camera_image_depth_get(cam_handle)
-        depth_img = np.asarray(depth_buffer)
-        depth_img.shape = (resolution[1], resolution[0])
-        depth_img = np.fliplr(depth_img)
-        zNear = 0.01
-        zFar = 10
-        depth_img = depth_img * (zFar - zNear) + zNear
-
-        return color_img, depth_img
-
-    def convert_persp_to_gravity_orth(self, color_img, depth_img, cam_pose, engine: Engine) -> Tuple[NDArray["224,224,3", float], NDArray["224,224", float]]:
-
+    def convert_persp_to_gravity_orth(self, color_img, depth_img, engine: Engine) -> Tuple[NDArray["224,224,3", float], NDArray["224,224", float]]:
+        cam_pose = self.create_perspcamera_trans_matrix4x4(engine) #env.r.sim.create_perspcamera_trans_matrix4x4(env.r.m)
         cam_intrinsics = np.asarray([[618.62, 0, 320], [0, 618.62, 240], [0, 0, 1]])
         workspace_limits: list = [[ -0.724, -0.276 ], [ -0.224, 0.224 ], [ -0.0001, 0.4 ]] # 3 axis: xmax-xmin; ymax-ymin, zmax-zmin
         heightmap_resolution: float = 0.002

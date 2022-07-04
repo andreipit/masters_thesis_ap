@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from utils.arg.model import ArgsModel
 from .model import RobotModel
 from .sim import RobotSim
@@ -47,6 +49,37 @@ class Robot():
 
     def add_objects(self, num_obj = 8):
         self.obj.add_objects(self.m, num_obj = num_obj)
+        
+    def get_persp_camera_data(self) -> Tuple[NDArray["480,640,3", float], NDArray["480,640", float]]:
+        """ Just persp images """
+        # Get color image from simulation
+        #sim_ret, resolution, raw_image = vrep.simxGetVisionSensorImage(self.sim_client, self.cam_handle, 0, vrep.simx_opmode_blocking)
+        sim_ret, cam_handle = self.m.engine.gameobject_find('Vision_sensor_persp')
+        sim_ret, resolution, raw_image = self.m.engine.camera_image_rgb_get(cam_handle)
+        
+        color_img = np.asarray(raw_image)
+        color_img.shape = (resolution[1], resolution[0], 3)
+        color_img = color_img.astype(float)/255
+        color_img[color_img < 0] += 1
+        color_img *= 255
+        color_img = np.fliplr(color_img)
+        color_img = color_img.astype(np.uint8)
+
+        # Get depth image from simulation
+        #sim_ret, resolution, depth_buffer = vrep.simxGetVisionSensorDepthBuffer(self.sim_client, self.cam_handle, vrep.simx_opmode_blocking)
+        sim_ret, resolution, depth_buffer = self.m.engine.camera_image_depth_get(cam_handle)
+        depth_img = np.asarray(depth_buffer)
+        depth_img.shape = (resolution[1], resolution[0])
+        depth_img = np.fliplr(depth_img)
+        zNear = 0.01
+        zFar = 10
+        depth_img = depth_img * (zFar - zNear) + zNear
+        
+        # moved here from outside
+        cam_depth_scale: float = 1
+        depth_img = depth_img * cam_depth_scale # env.r.m.cam_depth_scale # Apply depth scale from calibration
+    
+        return color_img, depth_img
 
     def get_photo(self):
         return self.sim.get_2_perspcamera_photos_480x640(self.m.engine, self.m.cam_depth_scale)
@@ -66,10 +99,10 @@ class Robot():
     def get_obj_masks(self, obj_ind):
         return self.mask.get_obj_masks(self.sim, self.m);
 
-    def grasp(self, pos: NDArray["3,1", float], rot: float):
+    def grasp(self, pos: NDArray["3,1", float], degrees: float):
         #self.grasper.move(pos, self.m.workspace_limits, self.m.engine)
         #self.grasper.rotate(rot, self.m.engine)
-        return self.grasper.grasp( pos, rot, self.m.workspace_limits, self.m.engine, self.gripper, self.mover)
+        return self.grasper.grasp( pos, degrees, self.m.workspace_limits, self.m.engine, self.gripper, self.mover)
 
     def push(self, pos, rot):
         return self.pusher.push( pos, rot, self.m.workspace_limits, self.m.engine, self.gripper, self.mover)
@@ -77,7 +110,7 @@ class Robot():
         #return self.pusher.push(self.sim, self.m, self.gripper, self.mover, pos, rot, self.m.workspace_limits)
 
     # render
-    def get_camera_data(self):
+    def get_persp_camera_data(self):
         return self.cam.get_camera_data(self.sim, self.m)
 
     # sim extra

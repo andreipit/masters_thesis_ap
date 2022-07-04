@@ -10,6 +10,7 @@ class RobotModel():
 
     # constants
     #cam_intrinsics = np.asarray([[618.62, 0, 320], [0, 618.62, 240], [0, 0, 1]])
+    heightmap_resolution: float = 0.002
 
     cam_depth_scale: float = 1
     workspace_limits: list = [[ -0.724, -0.276 ], [ -0.224, 0.224 ], [ -0.0001, 0.4 ]] # 3 axis: xmax-xmin; ymax-ymin, zmax-zmin

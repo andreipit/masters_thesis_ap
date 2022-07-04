@@ -5,7 +5,6 @@ import math
 
 from environment.modules.robot.simulation.engine import Engine
 from utils.custom_types import NDArray
-from environment.envs.env_01 import Env01
 from .persp_to_orth import PerspToOrth
 
 class OrthTo3d():
