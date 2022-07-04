@@ -24,7 +24,7 @@ class RobotMove():
             engine.global_rotation_set(_ObjID = dummy_id, _NewRot3D = (np.pi / 2, angle_next, np.pi / 2))
         _, rot_old = engine.global_rotation_get(_ObjID = dummy_id) # radians!!!
 
-    def move(self, pos_new: NDArray["3,1", float], limits: list, engine: Engine):
+    def move(self, pos_new: NDArray["3", float], limits: list, engine: Engine):
         #pos_new = self._convert_pos(pos_new, limits)
         _, dummy_id = engine.gameobject_find('UR5_target')
         _, pos_old = engine.global_position_get(_ObjID = dummy_id) #print('pos_old', pos_old, ' \n pos_new', pos_new)
