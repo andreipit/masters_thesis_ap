@@ -81,8 +81,8 @@ class Robot():
     
         return color_img, depth_img
 
-    def get_photo(self):
-        return self.sim.get_2_perspcamera_photos_480x640(self.m.engine, self.m.cam_depth_scale)
+    #def get_photo(self):
+    #    return self.sim.get_2_perspcamera_photos_480x640(self.m.engine, self.m.cam_depth_scale)
 
     #def convert_px_to_3d(self, color_img, depth_img):
     #    self.pxto3d.convert_px_to_3d(color_img, depth_img, self.m)

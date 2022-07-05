@@ -16,7 +16,7 @@ class Env01(Env):
         """
         #self.observation_space = Box(low=-1., high=1., shape=(480, 640, 3), dtype="float32") # color + depth => 4 layers
         self.observation_space = Box(low=-1., high=1., shape=(224, 224), dtype="float32") # color + depth => 4 layers
-        self.action_space = Box(low=-1., high=1., shape=(4,), dtype="float32") # [1.0, -0.5, 0, 0.25, 90] -> push at (-0.5,0,0.25) on angle 90
+        self.action_space = Box(low=-1., high=1., shape=(5,), dtype="float32") # [1.0, -0.5, 0, 0.25, 90] -> push at (-0.5,0,0.25) on angle 90
         self.total_r = -1
         self.round = -1
         print('Env is initted')
