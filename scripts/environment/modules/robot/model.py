@@ -13,7 +13,7 @@ class RobotModel():
     heightmap_resolution: float = 0.002
 
     cam_depth_scale: float = 1
-    workspace_limits: list = [[ -0.724, -0.276 ], [ -0.224, 0.224 ], [ -0.0001, 0.4 ]] # 3 axis: xmax-xmin; ymax-ymin, zmax-zmin
+    workspace_limits: list = [[ -0.724, -0.276 ], [ -0.224, 0.224 ], [ -0.0001, 0.4 ]] # 3 axis: xmin-xmax; ymin-ymax, z_heightmin-z_heightmax
     color_space = np.asarray([[78.0, 121.0, 167.0], # blue
                                         [89.0, 161.0, 79.0], # green
                                         [156, 117, 95], # brown

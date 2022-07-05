@@ -25,7 +25,7 @@ class RobotMove():
         _, rot_old = engine.global_rotation_get(_ObjID = dummy_id) # radians!!!
 
     def move(self, pos_new: NDArray["3", float], limits: list, engine: Engine):
-        #pos_new = self._convert_pos(pos_new, limits)
+        pos_new = self._convert_pos(pos_new, limits)
         _, dummy_id = engine.gameobject_find('UR5_target')
         _, pos_old = engine.global_position_get(_ObjID = dummy_id) #print('pos_old', pos_old, ' \n pos_new', pos_new)
         delay = int(np.linalg.norm(np.asarray(pos_old) - np.asarray(pos_new)) * 50)
@@ -47,6 +47,18 @@ class RobotMove():
         return [x, y, z]
 
     def _convert_pos(self, pos: NDArray["3,1", float], limits: list) -> NDArray["3,1", float]:
+        x, y, z = pos[0], pos[1], pos[2]
+        xmin, xmax, ymin, ymax, zmin, zmax = limits[0][0], limits[0][1], limits[1][0], limits[1][1], limits[2][0], limits[2][1]
+        #print('xmin, xmax, ymin, ymax, zmin, zmax', xmin, xmax, ymin, ymax, zmin, zmax)
+        if x < xmin: x = xmin
+        if x > xmax: x = xmax
+        if y < ymin: y = ymin
+        if y > ymax: y = ymax
+        if z < zmin: z = zmin
+        if z > zmax: z = zmax
+        return np.asarray([x,y,z])
+
+    def _convert_pos_orig(self, pos: NDArray["3,1", float], limits: list) -> NDArray["3,1", float]:
         res = np.asarray(pos).copy()
         res[2] = max(res[2] - 0.04, limits[2][0] + 0.02) # higher table or -= 0.04
         res = (res[0], res[1], res[2] +  0.15) # just += 0.15
