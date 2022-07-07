@@ -12,6 +12,8 @@ from utils.arg.parser_json import ParserJson
 from utils.arg.model import ArgsModel
 from utils.perspto3d.persp_to_orth import PerspToOrth
 from utils.perspto3d.orth_to_3d import OrthTo3d
+from network.network import Network
+
 
 
 

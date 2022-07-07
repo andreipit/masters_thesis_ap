@@ -47,6 +47,7 @@
     <Compile Include="environment\modules\robot\simulation\coppelia\coppelia_api.py" />
     <Compile Include="environment\modules\robot\simulation\unity3d\unity3d_api.py" />
     <Compile Include="environment\modules\robot\simulation\engine.py" />
+    <Compile Include="network\network.py" />
     <Compile Include="tests\dqn_min\factory.py" />
     <Compile Include="tests\dqn_min\forward.py" />
     <Compile Include="tests\dqn_min\importer.py" />
@@ -103,6 +104,7 @@
     <Folder Include="environment\modules\robot\simulation\" />
     <Folder Include="environment\modules\robot\simulation\coppelia\" />
     <Folder Include="environment\modules\robot\simulation\unity3d\" />
+    <Folder Include="network\" />
     <Folder Include="tests\" />
     <Folder Include="tests\dqn_min\" />
     <Folder Include="tests\dqn_min\logs\" />
