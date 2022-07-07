@@ -73,6 +73,9 @@ class Env01(Env):
         """
         color_img, depth_img = self.r.get_persp_camera_data()
         color_heightmap, depth_heightmap = PerspToOrth().convert_persp_to_gravity_orth(color_img, depth_img, self.r.m.engine)
+        
+        #depth_heightmap = torch.unsqueeze(depth_heightmap, 0) # [224x224]=>[1,224,224]: add dimension at position 0
+        
         return depth_heightmap
         #return color_heightmap
 

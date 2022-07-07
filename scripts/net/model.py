@@ -5,9 +5,18 @@ def create_network_224x224_to_224x224() -> nn.Module:
     from collections import OrderedDict
   
     network = nn.Sequential()
-    #network.add_module('layer1', nn.Linear(in_features=224*224, out_features=224*224))
     network.add_module('conv', nn.Conv2d(in_channels=1, out_channels=1, kernel_size=3, padding=1))
+    #image_h = 224
+    #image_w = 224
 
+
+    #network = nn.Sequential()
+    #network.add_module('conv', nn.Conv2d(1, 6, 5))
+    #network.add_module('pool', nn.MaxPool2d(2, 2))
+    #network.add_module('conv2', nn.Conv2d(6, 16, 5))
+    #network.add_module('Linear', nn.Linear(16 * image_h * image_w, 120))
+    #network.add_module('Linear', nn.Linear(120, 84))
+    #network.add_module('Linear', nn.Linear(84, 10))
 
     #network = nn.Sequential(OrderedDict([
     #    ('grasp-norm0', nn.BatchNorm2d(3072)),

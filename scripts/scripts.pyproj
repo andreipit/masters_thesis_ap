@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>36743adb-75ca-488c-9295-8a8a8d0e01bd</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>scripts_entry_point_v2.py</StartupFile>
+    <StartupFile>tests\test_nn_input_shape_v2.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -78,6 +78,9 @@
     <Compile Include="environment\modules\render.py" />
     <Compile Include="environment\modules\reset.py" />
     <Compile Include="environment\modules\step.py" />
+    <Compile Include="tests\test_nn_input_shape.py" />
+    <Compile Include="tests\test_nn_input_shape_v2.py" />
+    <Compile Include="tests\test_nn_input_shape_v3.py" />
     <Compile Include="tests\test_sb3.py" />
     <Compile Include="utils\arg\model.py" />
     <Compile Include="utils\arg\model_backup.py" />
@@ -190,6 +193,7 @@
     <Content Include="environment\modules\robot\simulation\coppelia\remoteApi.dll" />
     <Content Include="environment\modules\robot\simulation\coppelia\remoteApi.so" />
     <Content Include="net\logs\init.txt" />
+    <Content Include="tests\convolution_example.PNG" />
     <Content Include="tests\dqn_min\logs\backup_double_dqn_3000000_r_259.pt" />
     <Content Include="tests\dqn_min\logs\backup_dqn_3000000_r_280.pt" />
     <Content Include="tests\dqn_min\logs\init.txt" />
