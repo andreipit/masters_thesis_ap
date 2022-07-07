@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>36743adb-75ca-488c-9295-8a8a8d0e01bd</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>test\test_sb3.py</StartupFile>
+    <StartupFile>tests\test_sb3.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -47,14 +47,28 @@
     <Compile Include="environment\modules\robot\simulation\coppelia\coppelia_api.py" />
     <Compile Include="environment\modules\robot\simulation\unity3d\unity3d_api.py" />
     <Compile Include="environment\modules\robot\simulation\engine.py" />
-    <Compile Include="test\test_env.py" />
-    <Compile Include="test\test_env_01_reset.py" />
+    <Compile Include="tests\dqn_min\factory.py" />
+    <Compile Include="tests\dqn_min\forward.py" />
+    <Compile Include="tests\dqn_min\importer.py" />
+    <Compile Include="tests\dqn_min\load_saved_model.py" />
+    <Compile Include="tests\dqn_min\log.py" />
+    <Compile Include="tests\dqn_min\loss.py" />
+    <Compile Include="tests\dqn_min\loss_backup.py" />
+    <Compile Include="tests\dqn_min\loss_double_dqn.py" />
+    <Compile Include="tests\dqn_min\min_entry_point.py" />
+    <Compile Include="tests\dqn_min\min_entry_point_v2.py" />
+    <Compile Include="tests\dqn_min\min_entry_point_v3.py" />
+    <Compile Include="tests\dqn_min\network.py" />
+    <Compile Include="tests\dqn_min\plot.py" />
+    <Compile Include="tests\dqn_min\utils\utils.py" />
+    <Compile Include="tests\test_env.py" />
+    <Compile Include="tests\test_env_01_reset.py" />
     <Compile Include="environment\modules\init.py" />
     <Compile Include="environment\modules\model.py" />
     <Compile Include="environment\modules\render.py" />
     <Compile Include="environment\modules\reset.py" />
     <Compile Include="environment\modules\step.py" />
-    <Compile Include="test\test_sb3.py" />
+    <Compile Include="tests\test_sb3.py" />
     <Compile Include="utils\arg\model.py" />
     <Compile Include="utils\arg\model_backup.py" />
     <Compile Include="utils\arg\parser_json_backup.py" />
@@ -64,8 +78,8 @@
     <Compile Include="utils\network\server_unity3d.py" />
     <Compile Include="setup.py" />
     <Compile Include="scripts_entry_point.py" />
-    <Compile Include="test\test_server.py" />
-    <Compile Include="test\test_gym_registration.py" />
+    <Compile Include="tests\test_server.py" />
+    <Compile Include="tests\test_gym_registration.py" />
     <Compile Include="utils\perspto3d\orth_to_3d.py" />
     <Compile Include="utils\perspto3d\persp_to_orth.py" />
     <Compile Include="utils\perspto3d\test.py" />
@@ -89,8 +103,13 @@
     <Folder Include="environment\modules\robot\simulation\" />
     <Folder Include="environment\modules\robot\simulation\coppelia\" />
     <Folder Include="environment\modules\robot\simulation\unity3d\" />
+    <Folder Include="tests\" />
+    <Folder Include="tests\dqn_min\" />
+    <Folder Include="tests\dqn_min\logs\" />
+    <Folder Include="tests\dqn_min\utils\" />
+    <Folder Include="tests\dqn_min\utils\__pycache__\" />
+    <Folder Include="tests\dqn_min\__pycache__\" />
     <Folder Include="utils\" />
-    <Folder Include="test\" />
     <Folder Include="environment\modules\" />
     <Folder Include="utils\arg\" />
     <Folder Include="utils\arg\__pycache__\" />
@@ -158,6 +177,18 @@
     <Content Include="environment\modules\robot\__pycache__\sim.cpython-38.pyc" />
     <Content Include="environment\modules\robot\simulation\coppelia\remoteApi.dll" />
     <Content Include="environment\modules\robot\simulation\coppelia\remoteApi.so" />
+    <Content Include="tests\dqn_min\logs\backup_double_dqn_3000000_r_259.pt" />
+    <Content Include="tests\dqn_min\logs\backup_dqn_3000000_r_280.pt" />
+    <Content Include="tests\dqn_min\logs\init.txt" />
+    <Content Include="tests\dqn_min\utils\__pycache__\utils.cpython-38.pyc" />
+    <Content Include="tests\dqn_min\__pycache__\factory.cpython-38.pyc" />
+    <Content Include="tests\dqn_min\__pycache__\forward.cpython-38.pyc" />
+    <Content Include="tests\dqn_min\__pycache__\importer.cpython-38.pyc" />
+    <Content Include="tests\dqn_min\__pycache__\log.cpython-38.pyc" />
+    <Content Include="tests\dqn_min\__pycache__\loss.cpython-38.pyc" />
+    <Content Include="tests\dqn_min\__pycache__\loss_double_dqn.cpython-38.pyc" />
+    <Content Include="tests\dqn_min\__pycache__\network.cpython-38.pyc" />
+    <Content Include="tests\dqn_min\__pycache__\plot.cpython-38.pyc" />
     <Content Include="utils\arg\parser_json.py" />
     <Content Include="utils\arg\__pycache__\model.cpython-38.pyc" />
     <Content Include="utils\arg\__pycache__\model_json.cpython-38.pyc" />
