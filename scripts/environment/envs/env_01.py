@@ -63,7 +63,7 @@ class Env01(Env):
         return self.state # old version: np.ones((1,), dtype="float32")
 
     def render(self):
-        plt.imshow(self.state); plt.show(block=True)
+        #plt.imshow(self.state); plt.show(block=True)
         print("=============================================================================")
         print('Round:', self.round, 'Total r:', self.total_r, 'State:', self.state.shape, ' pixel_223_223:', self.state[223][223])
         print("=============================================================================")
