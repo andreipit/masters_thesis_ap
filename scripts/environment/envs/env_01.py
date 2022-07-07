@@ -74,6 +74,7 @@ class Env01(Env):
         color_img, depth_img = self.r.get_persp_camera_data()
         color_heightmap, depth_heightmap = PerspToOrth().convert_persp_to_gravity_orth(color_img, depth_img, self.r.m.engine)
         return depth_heightmap
+        #return color_heightmap
 
 
 if __name__ == '__main__':

@@ -8,24 +8,43 @@ STEPS = 1000 #1000 # 1000 # each order we backprop
 
 def create_env():
     env = Env01() #gym.make("CartPole-v1") #env = gym.make('environment:env-v1')
-    NN = create_network().to(device)
-    NN_frozen = create_network().to(device) #DQNAgent(NN.state_shape, NN.n_actions, epsilon=0.5).to(device)
+    NN = create_network_224x224_to_224x224().to(device)
+    NN_frozen = create_network_224x224_to_224x224().to(device) #DQNAgent(NN.state_shape, NN.n_actions, epsilon=0.5).to(device)
     NN_frozen.load_state_dict(NN.state_dict())
     opt = torch.optim.Adam(NN.parameters(), lr=1e-4)
     ex_ex = 0.5
     return env, NN, NN_frozen, opt, ex_ex
 
 
-if __name__ == '__main__':
 
+def test():
+    env, NN, NN_frozen, opt, eps_ex_ex = create_env()
+    r_session = 0   # accumulate r from all steps inside one session
+    r_sessions = [] # save all sessions rewards inside one epoch
+    r_epochs = []   # it is NOT sessions sum! It is mean! Epoch reward = mean of all his sessions
+    s = env.reset()
+    print('s.shape ', s.shape)
+    #plt.imshow(s); plt.show(block=True)
+
+    #flatten = nn.Flatten()
+    #s = flatten(s)
+
+    a = get_action(s, NN, eps_ex_ex)
+    print('a', a)
+    #plt.imshow(a); plt.show(block=True)
+
+
+
+def start():
+    
     env, NN, NN_frozen, opt, eps_ex_ex = create_env()
     r_session = 0   # accumulate r from all steps inside one session
     r_sessions = [] # save all sessions rewards inside one epoch
     r_epochs = []   # it is NOT sessions sum! It is mean! Epoch reward = mean of all his sessions
     i = 0
 
-    s = env.reset()
 
+    s = env.reset()
     while True:
         i += 1
         a = get_action(s, NN, eps_ex_ex)
@@ -43,3 +62,5 @@ if __name__ == '__main__':
             s = env.reset()
 
 
+if __name__ == '__main__':
+    test()
