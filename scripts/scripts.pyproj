@@ -56,6 +56,7 @@
     <Compile Include="net\model.py" />
     <Compile Include="net\plot.py" />
     <Compile Include="net\utils.py" />
+    <Compile Include="scripts_entry_point_v2.py" />
     <Compile Include="tests\dqn_min\factory.py" />
     <Compile Include="tests\dqn_min\forward.py" />
     <Compile Include="tests\dqn_min\importer.py" />
