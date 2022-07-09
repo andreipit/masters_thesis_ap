@@ -1,5 +1,7 @@
+from numpy import float64
 from environment.modules.importer import *
 #self.initer, self.steper, self.reseter, self.renderer, self.model = EnvInit(), EnvStep(), EnvReset(), EnvRender(), EnvModel()
+import torch
 
 
 class Env01(Env):
@@ -15,8 +17,12 @@ class Env01(Env):
         example: (0, 5, 6, 8) => push at Vector3(5,6,8) to right 10sm
         """
         #self.observation_space = Box(low=-1., high=1., shape=(480, 640, 3), dtype="float32") # color + depth => 4 layers
-        self.observation_space = Box(low=-1., high=1., shape=(224, 224), dtype="float32") # color + depth => 4 layers
-        self.action_space = Box(low=-1., high=1., shape=(5,), dtype="float32") # [1.0, -0.5, 0, 0.25, 90] -> push at (-0.5,0,0.25) on angle 90
+        #self.observation_space = Box(low=-1., high=1., shape=(224, 224), dtype="float64") # color + depth => 4 layers
+        self.observation_space = Box(low=-1000., high=1000., shape=(2, 224, 224, 3), dtype="float64") # color + depth => 4 layers
+        #self.observation_space = Box(low=-10., high=10., shape=(2, 1, 3, 640, 640), dtype="float32") # 2 mini batches: both 3x640x640 wrapped in extra dim
+        #self.observation_space = Box(low=-10., high=10., shape=(2, 1, 3, 640, 640), dtype="float32") # 2 mini batches: both 3x640x640 wrapped in extra dim
+        #self.observation_space = Box(low=-1., high=1., shape=(480, 640), dtype="float32") # 2 mini batches: both 3x640x640 wrapped in extra dim
+        self.action_space = Box(low=-1., high=1., shape=(5,), dtype="float64") # [1.0, -0.5, 0, 0.25, 90] -> push at (-0.5,0,0.25) on angle 90
         self.total_r = -1
         self.round = -1
         print('Env is initted')
@@ -59,7 +65,7 @@ class Env01(Env):
 
         self.round = 0
         EnvReset.run()
-        print('Env is resetted. State =', self.state.shape, ' [x200;y200] =', self.state[200][200]) # (480, 640, 3)  [x200;y200] = [45 45 45]
+        print('Env is resetted. State =', self.state.shape) # (480, 640, 3)  [x200;y200] = [45 45 45]
         return self.state # old version: np.ones((1,), dtype="float32")
 
     def render(self):
@@ -68,16 +74,35 @@ class Env01(Env):
         print('Round:', self.round, 'Total r:', self.total_r, 'State:', self.state.shape, ' pixel_223_223:', self.state[223][223])
         print("=============================================================================")
 
+
     def _get_state(self) -> ObsType:
         """ depth enough for px->3d conversion, color used for mask only
         """
-        color_img, depth_img = self.r.get_persp_camera_data()
-        color_heightmap, depth_heightmap = PerspToOrth().convert_persp_to_gravity_orth(color_img, depth_img, self.r.m.engine)
+        color_img_480_640_3, depth_img_480_640 = self.r.get_persp_camera_data() # -> Tuple[NDArray["480,640,3", float], NDArray["480,640", float]]:
+        c, depth_heightmap_224x224 = PerspToOrth().convert_persp_to_gravity_orth(color_img_480_640_3, depth_img_480_640, self.r.m.engine) # -> Tuple[NDArray["224,224,3", float], NDArray["224,224", float]]:
+        d = Reshaper().add_3_depth_channels(depth_heightmap_224x224) # 224, 224 => 224, 224, 3
+        mix = np.array([c, d], dtype=float64)
+        #print('mix==',mix.shape, mix.dtype)
+
+        #print('d', d.shape, d.dtype, d)
+        #return depth_heightmap_224x224
+        return mix
         
-        #depth_heightmap = torch.unsqueeze(depth_heightmap, 0) # [224x224]=>[1,224,224]: add dimension at position 0
-        
-        return depth_heightmap
-        #return color_heightmap
+        #depth_img_3_channels = np.expand_dims(depth_img, axis=0) # 480,640 ==> 480,640,3
+        #print('depth_img_3_channels',depth_img_3_channels.shape)
+        #rs = np.array([color_img, depth_img_3_channels])
+        #print('ppppp',rs.shape)
+        #return rs
+
+        #c, d = Reshaper().scale_224x224_to_640x480(c, d)
+        #c, d = Reshaper().add_padding_keep_shape(c, d)
+        #c, d = Reshaper().scale_and_normalize(c, d) # -> Tuple[NDArray["640, 640, 3", float], NDArray["640, 640, 3", float]]:
+        #c, d = Reshaper().reshape_to_minibatch_1_3_640_640(c, d) #  -> Tuple[NDArray["1, 3, 640, 640", float], NDArray["1, 3, 640, 640", float]]:
+        #color_heightmap = c
+        #depth_heightmap = d
+        #two_batches = torch.stack([color_heightmap, depth_heightmap]) # ([2, 1, 3, 640, 640])
+        #print('---two_batches',two_batches.shape)
+        #return two_batches
 
 
 if __name__ == '__main__':

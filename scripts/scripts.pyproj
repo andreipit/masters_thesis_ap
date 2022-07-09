@@ -4,14 +4,14 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>36743adb-75ca-488c-9295-8a8a8d0e01bd</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>tests\test_nn_input_shape_v2.py</StartupFile>
+    <StartupFile>scripts_entry_point_v2.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>scripts</Name>
     <RootNamespace>scripts</RootNamespace>
-    <InterpreterId>CondaEnv|CondaEnv|eff_env38_sb3</InterpreterId>
+    <InterpreterId>Global|VisualStudio|eff_env38</InterpreterId>
     <SuppressConfigureTestFrameworkPrompt>true</SuppressConfigureTestFrameworkPrompt>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -71,6 +71,7 @@
     <Compile Include="tests\dqn_min\network.py" />
     <Compile Include="tests\dqn_min\plot.py" />
     <Compile Include="tests\dqn_min\utils\utils.py" />
+    <Compile Include="tests\pretrained_feature_extractor\test_pretrained.py" />
     <Compile Include="tests\test_env.py" />
     <Compile Include="tests\test_env_01_reset.py" />
     <Compile Include="environment\modules\init.py" />
@@ -81,6 +82,7 @@
     <Compile Include="tests\test_nn_input_shape.py" />
     <Compile Include="tests\test_nn_input_shape_v2.py" />
     <Compile Include="tests\test_nn_input_shape_v3.py" />
+    <Compile Include="tests\test_np_expand_dim.py" />
     <Compile Include="tests\test_sb3.py" />
     <Compile Include="utils\arg\model.py" />
     <Compile Include="utils\arg\model_backup.py" />
@@ -93,8 +95,10 @@
     <Compile Include="scripts_entry_point.py" />
     <Compile Include="tests\test_server.py" />
     <Compile Include="tests\test_gym_registration.py" />
+    <Compile Include="utils\perspto3d\reshaper.py" />
     <Compile Include="utils\perspto3d\orth_to_3d.py" />
     <Compile Include="utils\perspto3d\persp_to_orth.py" />
+    <Compile Include="utils\perspto3d\reshaper_depth.py" />
     <Compile Include="utils\perspto3d\test.py" />
     <Compile Include="utils\utils.py" />
   </ItemGroup>
@@ -124,6 +128,7 @@
     <Folder Include="tests\dqn_min\utils\" />
     <Folder Include="tests\dqn_min\utils\__pycache__\" />
     <Folder Include="tests\dqn_min\__pycache__\" />
+    <Folder Include="tests\pretrained_feature_extractor\" />
     <Folder Include="utils\" />
     <Folder Include="environment\modules\" />
     <Folder Include="utils\arg\" />

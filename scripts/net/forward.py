@@ -11,7 +11,7 @@ def get_action(state, network, epsilon=0):
     
     state = torch.unsqueeze(state, 0) # add dimension at position 0
     
-    print('fwd input shape:',state.shape)
+    #print('fwd input shape:',state.shape)
     q_values = network(state).detach() # 2 qvalues for L and R: #==> q_values [[-0.16288276  0.15193802]] 
     
     # .numpy()

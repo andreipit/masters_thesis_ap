@@ -19,5 +19,6 @@ from environment.modules.robot.robot import Robot
 from utils.custom_types import NDArray
 
 from utils.perspto3d.persp_to_orth import PerspToOrth
+from utils.perspto3d.reshaper import Reshaper
 from utils.perspto3d.orth_to_3d import OrthTo3d
 
