@@ -51,9 +51,11 @@
     <Compile Include="net\forward.py" />
     <Compile Include="net\importer.py" />
     <Compile Include="net\inference.py" />
+    <Compile Include="net\push_grasp_net_min.py" />
     <Compile Include="net\loss_ddqn.py" />
     <Compile Include="net\entry_point.py" />
     <Compile Include="net\model.py" />
+    <Compile Include="net\push_grasp_net.py" />
     <Compile Include="net\plot.py" />
     <Compile Include="net\utils.py" />
     <Compile Include="scripts_entry_point_v2.py" />

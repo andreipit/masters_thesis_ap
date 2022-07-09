@@ -15,6 +15,8 @@ from utils.perspto3d.orth_to_3d import OrthTo3d
 from utils.perspto3d.reshaper_depth import ReshaperDepth
 from utils.perspto3d.reshaper import Reshaper
 from net.entry_point import Network
+from net.push_grasp_net import push_grasp_net
+from net.push_grasp_net_min import push_grasp_net_min
 
 
 

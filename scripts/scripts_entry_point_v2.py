@@ -1,3 +1,4 @@
+from torch.types import Device
 from utils.imports.entry_point_import import *
 from net.importer import *
 EPOCHS = 30 #30 # 1000 # each month we lower exploration tradeoff (start more exploitation)
@@ -41,19 +42,26 @@ def test():
     
     c_batch, d_batch = convert_state_to_nn_input(s[0], s[1])
     
-    
-    print('c_batch.shape ', c_batch.shape) # [1, 3, 640, 640]
-    print('d_batch.shape ', d_batch.shape) # [1, 3, 640, 640]
-    
-    
-    c_batch_640_640_3 = Reshaper().cwh_to_whc( c_batch[0] )
-    print('c_batch_640_640_3',c_batch_640_640_3.shape)
-    d_batch_640_640_3 = Reshaper().cwh_to_whc( d_batch[0] )
-    print('d_batch_640_640_3',d_batch_640_640_3.shape)
+    #print('c_batch.shape ', c_batch.shape) # [1, 3, 640, 640]
+    #print('d_batch.shape ', d_batch.shape) # [1, 3, 640, 640]
+    #c_batch_640_640_3 = Reshaper().cwh_to_whc( c_batch[0] )
+    #print('c_batch_640_640_3',c_batch_640_640_3.shape)
+    #d_batch_640_640_3 = Reshaper().cwh_to_whc( d_batch[0] )
+    #print('d_batch_640_640_3',d_batch_640_640_3.shape)
+    #plt.imshow(c_batch_640_640_3); plt.show(block=True)
+    #plt.imshow(d_batch_640_640_3); plt.show(block=True)
 
-    plt.imshow(c_batch_640_640_3); plt.show(block=True)
-    plt.imshow(d_batch_640_640_3); plt.show(block=True)
-    #plt.imshow(d_batch[0]); plt.show(block=True)
+    net = push_grasp_net()
+    net.to(device)
+    output_prob, state_feat = net.forward(c_batch.to(device), d_batch.to(device))
+
+    print('------------------- FWD OUT:', len(output_prob), len(state_feat)) # 16, 16
+    print('------------------- FWD OUT[0]:',  len(output_prob[0]), len(state_feat[0])) #2 , 2
+     #=> 16, 16
+    print('len(output_prob[0])',len(output_prob[0]), type(output_prob[0]) ) #2 list => list of 2 tensors
+    print('output_prob[0][0].shape', output_prob[0][0].shape, type(output_prob[0][0]) )#([1, 1, 320, 320])  tensor
+    print('state_feat[0][0].shape', state_feat[0][0].shape, type(output_prob[0][0]) )#  torch.Size([1, 2048, 20, 20])
+    plt.imshow(output_prob[0][0][0][0].cpu()); plt.show(block=True) # 320 x 320 ==> qvalues
 
 
     #output_prob, state_feat = m.model.forward(input_color_data, input_depth_data, is_volatile, specific_rotation)
